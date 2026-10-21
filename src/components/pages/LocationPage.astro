@@ -1,0 +1,256 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../PageHero.astro';
+import MediaFrame from '../MediaFrame.astro';
+import MapCard from '../MapCard.astro';
+import Icon from '../Icon.astro';
+import { getContent } from '../../content';
+import type { Locale } from '../../content/types';
+import { localizePath } from '../../i18n/routing';
+import type { PhotoKey } from '../../data/photos';
+import { breadcrumbs } from '../../data/schema';
+
+export interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getContent(locale);
+
+const sectionImages: PhotoKey[] = ['umbrellas', 'bay-vouno', 'alley', 'terrace-wide'];
+const ratesHref = localizePath(locale, 'rates/');
+
+const crumbs = breadcrumbs(
+  [
+    { name: t.nav.home, path: '' },
+    { name: t.nav.location, path: 'location/' },
+  ],
+  locale,
+);
+---
+
+<BaseLayout
+  locale={locale}
+  path="location/"
+  meta={t.meta.location}
+  ogImage="/og/location.jpg"
+  jsonLd={crumbs}
+>
+  <PageHero
+    eyebrow={t.locationPage.eyebrow}
+    title={t.locationPage.title}
+    intro={t.locationPage.intro}
+    meta="36.9367° N · 24.7069° E"
+  />
+
+  <section class="location-hero">
+    <div class="shell-wide">
+      <MediaFrame
+        photo="beach-long"
+        locale={locale}
+        ratio="21 / 9"
+        sizes="100vw"
+        priority
+        loading="eager"
+        widths={[768, 1024, 1200]}
+        caption={`${t.home.location.eyebrow} — ${t.home.location.title}`}
+      />
+    </div>
+  </section>
+
+  <section class="section location-body">
+    <div class="shell location-body__list">
+      {
+        t.locationPage.sections.map((section, index) => (
+          <article
+            class:list={['location-section', index % 2 === 1 && 'location-section--reverse']}
+            id={section.id}
+            data-reveal
+          >
+            <div class="location-section__copy">
+              <p class="eyebrow">{section.eyebrow}</p>
+              <h2 class="location-section__title">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p class="location-section__text">{paragraph}</p>
+              ))}
+            </div>
+            <MediaFrame
+              photo={sectionImages[index] ?? 'alley'}
+              locale={locale}
+              ratio="4 / 3"
+              sizes="(min-width: 900px) 44vw, 100vw"
+            />
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section-tight location-practical">
+    <div class="shell location-practical__grid">
+      <div class="location-distances">
+        <p class="eyebrow">{t.home.location.eyebrow}</p>
+        <h2 class="display-md location-distances__title">{t.locationPage.distancesTitle}</h2>
+        <dl class="location-distances__list">
+          {
+            t.locationPage.distances.map((distance) => (
+              <div class="location-distances__row">
+                <dt>{distance.label}</dt>
+                <dd>{distance.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <MapCard
+        content={t}
+        title={t.locationPage.mapTitle}
+        note={t.locationPage.mapNote}
+        cta={t.locationPage.mapCta}
+      />
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="shell">
+      <div class="location-cta" data-reveal>
+        <div>
+          <p class="eyebrow eyebrow--light">{t.home.closing.eyebrow}</p>
+          <p class="location-cta__title">{t.locationPage.mapTitle}</p>
+        </div>
+        <div class="location-cta__actions">
+          <a class="btn btn--light" href={ratesHref}>
+            {t.actions.seeRates}
+            <Icon name="arrow-right" class="btn__arrow" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .location-hero {
+    padding-bottom: clamp(1rem, 3vw, 2rem);
+  }
+
+  .location-body__list {
+    display: grid;
+    gap: clamp(3rem, 7vw, 6rem);
+  }
+
+  .location-section {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.75rem);
+    align-items: center;
+  }
+
+  .location-section__copy {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+  }
+
+  .location-section__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 3.4vw, 2.9rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+  }
+
+  .location-section__text {
+    max-width: 52ch;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+  }
+
+  .location-practical {
+    background: var(--color-paper-deep);
+    border-block: 1px solid var(--color-line);
+    padding-block: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  .location-practical__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    align-items: start;
+  }
+
+  .location-distances {
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+  }
+
+  .location-distances__title {
+    margin-bottom: 0.5rem;
+  }
+
+  .location-distances__list {
+    display: grid;
+    margin: 0;
+  }
+
+  .location-distances__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 0.6rem;
+    border-top: 1px solid var(--color-line);
+    font-size: 0.86rem;
+  }
+
+  .location-distances__row:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .location-distances__row dt {
+    color: var(--color-ink-muted);
+  }
+
+  .location-distances__row dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    text-align: right;
+  }
+
+  .location-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    background: var(--color-sea);
+    color: var(--color-paper);
+  }
+
+  .location-cta__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.3rem);
+    margin-top: 0.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .location-section {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: clamp(2rem, 5vw, 4.5rem);
+    }
+
+    .location-section--reverse .location-section__copy {
+      order: 2;
+    }
+
+    .location-section--reverse .media-frame {
+      order: 1;
+    }
+
+    .location-practical__grid {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 4rem;
+    }
+  }
+</style>

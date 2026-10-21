@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../PageHero.astro';
+import { getContent } from '../../content';
+import type { Locale } from '../../content/types';
+
+export interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getContent(locale);
+---
+
+<BaseLayout locale={locale} path="privacy/" meta={t.meta.privacy} ogImage="/og/privacy.jpg">
+  <PageHero
+    eyebrow={t.privacyPage.eyebrow}
+    title={t.privacyPage.title}
+    intro={t.privacyPage.intro}
+    meta={t.privacyPage.updated}
+  />
+
+  <section class="section-tight legal">
+    <div class="shell legal__grid">
+      <div class="legal__nav" aria-hidden="true">
+        <ol>
+          {t.privacyPage.sections.map((section) => <li>{section.title}</li>)}
+        </ol>
+      </div>
+
+      <div class="legal__body">
+        {
+          t.privacyPage.sections.map((section) => (
+            <section class="legal__section">
+              <h2>{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </section>
+          ))
+        }
+
+        <div class="legal__contact">
+          <h2>{t.privacyPage.contactTitle}</h2>
+          <p>{t.privacyPage.contactBody}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .legal__nav {
+    display: none;
+  }
+
+  .legal__nav ol {
+    display: grid;
+    gap: 0.55rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.76rem;
+    color: var(--color-ink-muted);
+    counter-reset: legal;
+  }
+
+  .legal__nav li {
+    counter-increment: legal;
+    display: flex;
+    gap: 0.6rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid var(--color-line-soft);
+  }
+
+  .legal__nav li::before {
+    content: counter(legal, decimal-leading-zero);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+  }
+
+  .legal__body {
+    display: grid;
+    gap: clamp(1.75rem, 3vw, 2.5rem);
+    max-width: 66ch;
+  }
+
+  .legal__section,
+  .legal__contact {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .legal__section h2,
+  .legal__contact h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.2vw, 1.85rem);
+    line-height: 1.15;
+  }
+
+  .legal__section p,
+  .legal__contact p {
+    font-size: 0.94rem;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+  }
+
+  .legal__contact {
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  @media (min-width: 900px) {
+    .legal__grid {
+      grid-template-columns: 0.32fr 0.68fr;
+      gap: 5rem;
+    }
+
+    .legal__nav {
+      display: block;
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+</style>

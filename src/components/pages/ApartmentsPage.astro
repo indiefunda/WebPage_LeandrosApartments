@@ -1,0 +1,305 @@
+---
+import { Picture } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../PageHero.astro';
+import Icon from '../Icon.astro';
+import AvailabilityBar from '../AvailabilityBar.astro';
+import { getContent } from '../../content';
+import type { Locale } from '../../content/types';
+import { localizePath } from '../../i18n/routing';
+import { photos } from '../../data/photos';
+import { breadcrumbs } from '../../data/schema';
+
+export interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getContent(locale);
+
+const covers = ['m1-balcony', 'f2-veranda', 'b3-balcony'] as const;
+const contactHref = localizePath(locale, 'contact/');
+
+const crumbs = breadcrumbs(
+  [
+    { name: t.nav.home, path: '' },
+    { name: t.nav.apartments, path: 'apartments/' },
+  ],
+  locale,
+);
+---
+
+<BaseLayout
+  locale={locale}
+  path="apartments/"
+  meta={t.meta.apartments}
+  ogImage="/og/apartments.jpg"
+  jsonLd={crumbs}
+>
+  <PageHero
+    eyebrow={t.apartmentsPage.eyebrow}
+    title={t.apartmentsPage.title}
+    intro={t.apartmentsPage.intro}
+    meta="3 · Platys Gialos"
+  />
+
+  <section class="section-tight units">
+    <div class="shell units__list">
+      {
+        t.units.map((unit, index) => {
+          const cover = photos[covers[index] ?? 'house-front'];
+          return (
+            <article class:list={['unit-row', index % 2 === 1 && 'unit-row--reverse']} data-reveal>
+              <a
+                class="unit-row__media media"
+                href={localizePath(locale, `apartments/${unit.slug}/`)}
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <Picture
+                  src={cover.src}
+                  formats={['avif', 'webp']}
+                  fallbackFormat="jpeg"
+                  widths={[480, 720, 960, 1200]}
+                  sizes="(min-width: 900px) 46vw, 100vw"
+                  alt=""
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  quality={70}
+                />
+              </a>
+
+              <div class="unit-row__body">
+                <div class="unit-row__head">
+                  <p class="eyebrow eyebrow--bare">{unit.number}</p>
+                  <h2 class="unit-row__name">
+                    <a href={localizePath(locale, `apartments/${unit.slug}/`)}>{unit.name}</a>
+                  </h2>
+                </div>
+
+                <p class="unit-row__tagline">{unit.tagline}</p>
+                <p class="unit-row__intro">{unit.intro}</p>
+
+                <dl class="unit-row__specs">
+                  {unit.layout.map((row) => (
+                    <div class="unit-row__spec">
+                      <dt>{row.label}</dt>
+                      <dd>{row.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+
+                <div class="unit-row__foot">
+                  <p class="unit-row__meta">
+                    <span>
+                      {t.common.sleeps} {unit.sleeps} {t.common.guests}
+                    </span>
+                    <span aria-hidden="true">·</span>
+                    <span>
+                      {t.common.from} €{unit.fromPrice} / {t.common.perNight}
+                    </span>
+                  </p>
+                  <a class="link-arrow" href={localizePath(locale, `apartments/${unit.slug}/`)}>
+                    {t.actions.details}
+                    <Icon name="arrow-right" class="icon-arrow" />
+                  </a>
+                </div>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </section>
+
+  <div class="units__availability">
+    <AvailabilityBar locale={locale} content={t} variant="flat" />
+  </div>
+
+  <section class="section units__outro">
+    <div class="shell units__outro-inner">
+      <p class="units__outro-text" data-reveal>{t.apartmentsPage.outro}</p>
+      <a class="btn" href={contactHref} data-reveal>
+        {t.actions.book}
+        <Icon name="arrow-right" class="btn__arrow" />
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .units__list {
+    display: grid;
+    gap: clamp(3.5rem, 8vw, 7rem);
+    padding-top: clamp(1rem, 2.5vw, 2rem);
+  }
+
+  .unit-row {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.75rem);
+    align-items: center;
+  }
+
+  .unit-row__media {
+    display: block;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+  }
+
+  .unit-row__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.4s var(--ease-out-expo);
+  }
+
+  .unit-row:hover .unit-row__media img {
+    transform: scale(1.03);
+  }
+
+  .unit-row__body {
+    display: grid;
+    gap: 1.05rem;
+    align-content: center;
+  }
+
+  .unit-row__head {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .unit-row__name {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.6vw, 3.1rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .unit-row__name a {
+    text-decoration: none;
+  }
+
+  .unit-row__name a:hover {
+    color: var(--color-clay);
+  }
+
+  .unit-row__tagline {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+    line-height: 1.35;
+    color: var(--color-sea);
+    max-width: 30ch;
+  }
+
+  .unit-row__intro {
+    max-width: 48ch;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+  }
+
+  .unit-row__specs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin: 0.25rem 0;
+    max-width: 40rem;
+  }
+
+  .unit-row__spec {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 0.55rem;
+    border-top: 1px solid var(--color-line);
+    font-size: 0.85rem;
+  }
+
+  .unit-row__spec:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .unit-row__spec dt {
+    flex: none;
+    color: var(--color-ink-muted);
+  }
+
+  .unit-row__spec dd {
+    margin: 0;
+    text-align: right;
+    color: var(--color-ink-soft);
+  }
+
+  .unit-row__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.9rem 1.5rem;
+    margin-top: 0.35rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .unit-row__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .units__availability {
+    background: var(--color-paper-deep);
+    border-block: 1px solid var(--color-line);
+    padding-block: 1.15rem;
+    margin-top: clamp(3rem, 6vw, 5rem);
+  }
+
+  .units__outro {
+    background: var(--color-paper-deep);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .units__outro-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2.5rem;
+  }
+
+  .units__outro-text {
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+    line-height: 1.3;
+    max-width: 34ch;
+  }
+
+  @media (min-width: 900px) {
+    .unit-row {
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 5vw, 4.5rem);
+    }
+
+    .unit-row--reverse .unit-row__media {
+      order: 2;
+    }
+
+    .unit-row--reverse .unit-row__body {
+      order: 1;
+    }
+
+    .unit-row__specs {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  html[lang='el'] .unit-row__meta {
+    text-transform: none;
+    letter-spacing: 0.03em;
+  }
+</style>

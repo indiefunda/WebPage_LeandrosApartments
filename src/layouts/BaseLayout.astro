@@ -1,0 +1,156 @@
+---
+import '@fontsource-variable/eb-garamond';
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LangNotice from '../components/LangNotice.astro';
+import { getContent } from '../content';
+import type { Locale, Meta } from '../content/types';
+import { alternateLinks, absoluteUrl, localizePath } from '../i18n/routing';
+import { siteUrl } from '../data/property';
+
+export interface Props {
+  locale: Locale;
+  path: string;
+  meta: Meta;
+  ogImage?: string;
+  jsonLd?: Record<string, unknown> | (Record<string, unknown> | null)[];
+  noindex?: boolean;
+  bodyClass?: string;
+}
+
+const { locale, path, meta, ogImage = '/og/home.jpg', jsonLd, noindex = false, bodyClass = '' } = Astro.props;
+
+const t = getContent(locale);
+const canonical = absoluteUrl(localizePath(locale, path));
+const alternates = alternateLinks(path);
+const ogUrl = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`;
+
+const skipLabel: Record<Locale, string> = {
+  en: 'Skip to content',
+  el: 'Μετάβαση στο περιεχόμενο',
+  fr: 'Aller au contenu',
+};
+
+const jsonLdItems = (Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : []).filter(
+  (item): item is Record<string, unknown> => Boolean(item),
+);
+---
+
+<!doctype html>
+<html lang={t.htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{meta.title}</title>
+    <meta name="description" content={meta.description} />
+    <link rel="canonical" href={canonical} />
+
+    {
+      alternates.map((alternate) => (
+        <link rel="alternate" hreflang={alternate.hrefLang} href={alternate.href} />
+      ))
+    }
+
+    <meta
+      name="robots"
+      content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1'}
+    />
+    <meta name="theme-color" content="#f7f2e9" />
+    <meta name="color-scheme" content="light" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Leandros Apartments" />
+    <meta property="og:locale" content={t.ogLocale} />
+    <meta property="og:title" content={meta.title} />
+    <meta property="og:description" content={meta.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Leandros Apartments, Platys Gialos, Sifnos" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={meta.title} />
+    <meta name="twitter:description" content={meta.description} />
+    <meta name="twitter:image" content={ogUrl} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta name="generator" content={Astro.generator} />
+
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+
+    {jsonLdItems.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
+
+    <slot name="head" />
+  </head>
+
+  <body id="top" class={bodyClass}>
+    <a class="skip-link" href="#main">{skipLabel[locale]}</a>
+
+    <Header locale={locale} content={t} path={path} />
+
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+
+    <Footer locale={locale} content={t} path={path} />
+
+    <LangNotice locale={locale} path={path} />
+
+    <script>
+      // Scroll reveals — one observer, unobserved after first reveal.
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
+
+      if (reduced || !('IntersectionObserver' in window)) {
+        items.forEach((item) => item.setAttribute('data-reveal', 'in'));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.setAttribute('data-reveal', 'in');
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '280px 0px 280px 0px', threshold: 0.01 },
+        );
+        items.forEach((item) => observer.observe(item));
+      }
+    </script>
+
+    <style is:global>
+      .skip-link {
+        position: fixed;
+        top: 0.5rem;
+        left: 0.5rem;
+        z-index: 100;
+        transform: translateY(-150%);
+        padding: 0.75rem 1.15rem;
+        background: var(--color-ink);
+        color: var(--color-paper);
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+        text-decoration: none;
+        transition: transform 0.3s var(--ease-out-soft);
+      }
+
+      .skip-link:focus-visible {
+        transform: translateY(0);
+      }
+
+      main:focus {
+        outline: none;
+      }
+    </style>
+  </body>
+</html>

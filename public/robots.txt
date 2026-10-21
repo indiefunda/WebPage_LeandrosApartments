@@ -1,0 +1,10 @@
+# Leandros Apartments — Platys Gialos, Sifnos
+# https://leandros-apartments.web.app
+
+User-agent: *
+Allow: /
+
+# Static assets and generated images add no value to the index.
+Disallow: /_astro/
+
+Sitemap: https://leandros-apartments.web.app/sitemap-index.xml

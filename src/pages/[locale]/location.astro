@@ -1,0 +1,12 @@
+---
+import LocationPage from '../../components/pages/LocationPage.astro';
+import type { Locale } from '../../content/types';
+
+export function getStaticPaths() {
+  return [{ params: { locale: 'el' } }, { params: { locale: 'fr' } }];
+}
+
+const { locale } = Astro.params;
+---
+
+<LocationPage locale={locale as Locale} />

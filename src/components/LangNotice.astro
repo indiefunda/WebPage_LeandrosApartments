@@ -1,0 +1,142 @@
+---
+import { localeMeta } from '../i18n/routing';
+import type { Locale } from '../content/types';
+
+export interface Props {
+  locale: Locale;
+  path: string;
+}
+
+const { locale, path } = Astro.props;
+
+/**
+ * A quiet, dismissible suggestion for Greek and French visitors who land on the
+ * English edition. Deliberately not an automatic redirect: Googlebot must be
+ * able to reach every language, and a forced redirect loses the English page for
+ * the reader who actually wanted it.
+ */
+const suggestions: Record<string, { target: Locale; text: string; link: string }> = {
+  el: { target: 'el', text: 'Διαβάζετε στα ελληνικά;', link: 'Συνέχεια στα ελληνικά' },
+  fr: { target: 'fr', text: 'Vous préférez le français ?', link: 'Lire en français' },
+};
+---
+
+<div class="lang-notice" data-lang-notice hidden>
+  <p data-lang-notice-text></p>
+  <a data-lang-notice-link href="#"></a>
+  <button type="button" class="lang-notice__close" data-lang-notice-close aria-label="Close">×</button>
+</div>
+
+<script define:vars={{ suggestions, current: locale, path, meta: localeMeta }}>
+  const root = document.querySelector('[data-lang-notice]');
+  const textEl = document.querySelector('[data-lang-notice-text]');
+  const linkEl = document.querySelector('[data-lang-notice-link]');
+  const closeEl = document.querySelector('[data-lang-notice-close]');
+  const STORAGE_KEY = 'leandros.lang-choice';
+
+  if (root && textEl && linkEl && closeEl) {
+    let stored = null;
+    try {
+      stored = window.localStorage.getItem(STORAGE_KEY);
+    } catch {
+      stored = null;
+    }
+
+    const browser = (navigator.language || '').slice(0, 2).toLowerCase();
+    const match = suggestions[browser];
+
+    if (current === 'en' && match && !stored) {
+      const prefix = match.target === 'en' ? '' : `/${match.target}`;
+      const clean = path.replace(/^\/+|\/+$/g, '');
+      linkEl.href = clean ? `${prefix}/${clean}/` : `${prefix}/`;
+      linkEl.setAttribute('hreflang', meta[match.target].htmlLang);
+      linkEl.setAttribute('lang', meta[match.target].htmlLang);
+      linkEl.textContent = match.link;
+      textEl.textContent = match.text;
+      root.hidden = false;
+    }
+
+    const dismiss = () => {
+      root.hidden = true;
+      try {
+        window.localStorage.setItem(STORAGE_KEY, 'dismissed');
+      } catch {
+        /* private mode — the notice simply reappears next time */
+      }
+    };
+
+    closeEl.addEventListener('click', dismiss);
+    linkEl.addEventListener('click', () => {
+      try {
+        window.localStorage.setItem(STORAGE_KEY, match?.target ?? 'en');
+      } catch {
+        /* ignore */
+      }
+    });
+  }
+</script>
+
+<style>
+  .lang-notice {
+    position: fixed;
+    left: 1rem;
+    bottom: 1rem;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    max-width: calc(100vw - 2rem);
+    padding: 0.65rem 0.75rem 0.65rem 1rem;
+    background: var(--color-cream);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-lift);
+    font-size: 0.78rem;
+    color: var(--color-ink-soft);
+  }
+
+  .lang-notice[hidden] {
+    display: none;
+  }
+
+  .lang-notice p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .lang-notice a {
+    color: var(--color-clay);
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+    white-space: nowrap;
+  }
+
+  .lang-notice__close {
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink-muted);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .lang-notice__close:hover {
+    color: var(--color-ink);
+  }
+
+  @media (max-width: 520px) {
+    .lang-notice {
+      right: 1rem;
+      left: 1rem;
+      max-width: none;
+    }
+    .lang-notice p {
+      white-space: normal;
+    }
+  }
+</style>

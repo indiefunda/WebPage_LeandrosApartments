@@ -1,0 +1,207 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import { photos, type PhotoKey } from '../data/photos';
+import { localizePath } from '../i18n/routing';
+import type { ApartmentUnit, Locale, SiteContent } from '../content/types';
+
+export interface Props {
+  unit: ApartmentUnit;
+  locale: Locale;
+  content: SiteContent;
+  photo: PhotoKey;
+  index: number;
+}
+
+const { unit, locale, content: t, photo, index } = Astro.props;
+const item = photos[photo];
+const href = localizePath(locale, `apartments/${unit.slug}/`);
+const number = String(index + 1).padStart(2, '0');
+---
+
+<article class="unit-card" data-reveal style={`--reveal-delay:${index}`}>
+  <a class="unit-card__link" href={href} aria-labelledby={`unit-${unit.slug}`}>
+    <div class="unit-card__media media">
+      <Picture
+        src={item.src}
+        formats={['avif', 'webp']}
+        fallbackFormat="jpeg"
+        widths={[420, 640, 900, 1200]}
+        sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
+        alt={item.alt[locale]}
+        loading="lazy"
+        decoding="async"
+        quality={70}
+      />
+      <span class="unit-card__number">{number}</span>
+    </div>
+
+    <div class="unit-card__body">
+      <div class="unit-card__top">
+        <h3 class="unit-card__name" id={`unit-${unit.slug}`}>{unit.name}</h3>
+        <p class="unit-card__price">
+          <span>{t.common.from}</span>
+          <strong>€{unit.fromPrice}</strong>
+        </p>
+      </div>
+
+      <p class="unit-card__tagline">{unit.tagline}</p>
+
+      <div class="unit-card__meta">
+        <span>{t.common.sleeps} {unit.sleeps} {t.common.guests}</span>
+        <span class="unit-card__dot" aria-hidden="true"></span>
+        <span>{unit.number}</span>
+      </div>
+
+      <span class="unit-card__cta">
+        {t.actions.details}
+        <Icon name="arrow-right" class="unit-card__icon" />
+      </span>
+    </div>
+  </a>
+</article>
+
+<style>
+  .unit-card {
+    min-width: 0;
+  }
+
+  .unit-card__link {
+    display: grid;
+    gap: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .unit-card__media {
+    aspect-ratio: 4 / 5;
+    border-radius: 1px;
+  }
+
+  .unit-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out-expo);
+  }
+
+  .unit-card__link:hover .unit-card__media img {
+    transform: scale(1.045);
+  }
+
+  .unit-card__number {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    min-width: 2.15rem;
+    height: 2.15rem;
+    padding: 0 0.45rem;
+    background: color-mix(in oklab, var(--color-paper) 92%, transparent);
+    backdrop-filter: blur(6px);
+    font-family: var(--font-sans);
+    font-size: 0.64rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--color-ink);
+  }
+
+  .unit-card__body {
+    display: grid;
+    gap: 0.65rem;
+    padding-top: 0.1rem;
+  }
+
+  .unit-card__top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    border-top: 1px solid var(--color-line);
+    padding-top: 0.9rem;
+  }
+
+  .unit-card__name {
+    font-family: var(--font-display);
+    font-size: clamp(1.45rem, 1.9vw, 1.75rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    transition: color 0.4s ease;
+  }
+
+  .unit-card__link:hover .unit-card__name {
+    color: var(--color-clay);
+  }
+
+  .unit-card__price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    color: var(--color-ink-muted);
+    white-space: nowrap;
+  }
+
+  .unit-card__price strong {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--color-ink);
+  }
+
+  .unit-card__tagline {
+    font-size: 0.94rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+    max-width: 34ch;
+  }
+
+  .unit-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .unit-card__dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  .unit-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  :global(.unit-card__icon) {
+    width: 1.05rem;
+    height: 0.6rem;
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+
+  .unit-card__link:hover .unit-card__icon {
+    transform: translateX(0.35rem);
+  }
+
+  html[lang='el'] .unit-card__cta,
+  html[lang='el'] .unit-card__meta {
+    text-transform: none;
+    letter-spacing: 0.04em;
+  }
+</style>

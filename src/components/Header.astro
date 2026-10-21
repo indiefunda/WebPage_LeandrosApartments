@@ -1,0 +1,381 @@
+---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import LangSwitcher from './LangSwitcher.astro';
+import { localeHome, localizePath } from '../i18n/routing';
+import { property } from '../data/property';
+import type { Locale, SiteContent } from '../content/types';
+
+export interface Props {
+  locale: Locale;
+  content: SiteContent;
+  path: string;
+}
+
+const { locale, content: t, path } = Astro.props;
+const home = localeHome(locale);
+
+const links = [
+  { key: 'apartments', label: t.nav.apartments, path: 'apartments/' },
+  { key: 'location', label: t.nav.location, path: 'location/' },
+  { key: 'rates', label: t.nav.rates, path: 'rates/' },
+  { key: 'contact', label: t.nav.contact, path: 'contact/' },
+] as const;
+
+const isActive = (target: string) => path === target || path.startsWith(target);
+const bookHref = localizePath(locale, 'contact/');
+---
+
+<header class="site-header" data-site-header>
+  <div class="shell-wide header__inner">
+    <Logo href={home} label={t.brand.name} compact />
+
+    <nav class="header__nav" aria-label={t.nav.home}>
+      <ul class="header__nav-list">
+        {
+          links.map((link) => (
+            <li>
+              <a
+                class:list={['header__link', isActive(link.path) && 'is-active']}
+                href={localizePath(locale, link.path)}
+                aria-current={isActive(link.path) ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header__tools">
+      <LangSwitcher locale={locale} path={path} label={t.actions.language} />
+      <a class="btn btn--sm header__cta" href={bookHref}>{t.actions.book}</a>
+      <button
+        class="header__menu-btn"
+        type="button"
+        aria-label={t.actions.openMenu}
+        aria-expanded="false"
+        aria-controls="site-menu"
+        data-menu-open
+      >
+        <Icon name="menu" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog id="site-menu" class="menu" aria-label={t.actions.openMenu} data-menu>
+  <div class="menu__panel">
+    <div class="menu__top">
+      <Logo href={home} label={t.brand.name} compact />
+      <button class="menu__close" type="button" aria-label={t.actions.closeMenu} data-menu-close>
+        <Icon name="close" />
+      </button>
+    </div>
+
+    <nav class="menu__nav" aria-label={t.nav.home}>
+      <ul>
+        <li><a href={home} aria-current={path === '' ? 'page' : undefined}>{t.nav.home}</a></li>
+        {
+          links.map((link) => (
+            <li>
+              <a
+                href={localizePath(locale, link.path)}
+                aria-current={isActive(link.path) ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a class="btn menu__cta" href={bookHref}>{t.actions.book}</a>
+
+    <div class="menu__foot">
+      <div class="menu__contact">
+        <p class="eyebrow eyebrow--bare">{t.footer.contactTitle}</p>
+        <a href={`tel:${property.phones.mobile1}`}>{property.phones.mobile1Display}</a>
+        <a href={`https://wa.me/${property.whatsapp}`} target="_blank" rel="noopener">
+          {t.actions.whatsapp}
+        </a>
+      </div>
+      <LangSwitcher locale={locale} path={path} label={t.actions.language} variant="full" />
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in oklab, var(--color-paper) 86%, transparent);
+    backdrop-filter: blur(14px) saturate(1.1);
+    border-bottom: 1px solid transparent;
+    transition:
+      border-color 0.5s var(--ease-out-soft),
+      background-color 0.5s var(--ease-out-soft);
+  }
+
+  .site-header.is-scrolled {
+    border-bottom-color: var(--color-line);
+    background: color-mix(in oklab, var(--color-paper) 94%, transparent);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: var(--header-h);
+  }
+
+  .header__nav {
+    display: none;
+  }
+
+  .header__nav-list {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.1rem, 2.2vw, 2.1rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header__link {
+    position: relative;
+    display: inline-block;
+    padding: 0.4rem 0;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-ink-soft);
+    transition: color 0.3s ease;
+  }
+
+  .header__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+
+  .header__link:hover,
+  .header__link.is-active {
+    color: var(--color-ink);
+  }
+
+  .header__link:hover::after,
+  .header__link.is-active::after {
+    transform: scaleX(1);
+  }
+
+  .header__tools {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .header__cta {
+    display: none;
+  }
+
+  .header__menu-btn,
+  .menu__close {
+    display: inline-grid;
+    place-items: center;
+    width: 2.85rem;
+    height: 2.85rem;
+    border: 1px solid var(--color-line);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--color-ink);
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  .header__menu-btn:hover,
+  .menu__close:hover {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  .header__menu-btn :global(svg),
+  .menu__close :global(svg) {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  /* Dialog ---------------------------------------------------------------- */
+  .menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    overflow-y: auto;
+  }
+
+  .menu::backdrop {
+    background: rgb(10 42 47 / 0.4);
+  }
+
+  .menu__panel {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 4vh, 2.75rem);
+    min-height: 100%;
+    padding: 1.1rem var(--gutter) 2.5rem;
+  }
+
+  .menu__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .menu__nav ul {
+    display: grid;
+    gap: 0.15rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .menu__nav a {
+    display: block;
+    padding: 0.35rem 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 6vw, 2.6rem);
+    line-height: 1.1;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+
+  .menu__nav a[aria-current='page'] {
+    color: var(--color-clay);
+    font-style: italic;
+  }
+
+  .menu__cta {
+    width: 100%;
+  }
+
+  .menu__foot {
+    display: grid;
+    gap: 1.75rem;
+    margin-top: auto;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .menu__contact {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .menu__contact a {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    text-decoration: none;
+  }
+
+  .menu__contact a:hover {
+    color: var(--color-clay);
+  }
+
+  @media (min-width: 900px) {
+    .header__nav {
+      display: block;
+    }
+
+    .header__cta {
+      display: inline-flex;
+    }
+
+    .header__menu-btn {
+      display: none;
+    }
+
+    .menu {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1180px) {
+    .header__inner {
+      gap: 2rem;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .header__tools .lang--compact {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  const menu = document.querySelector<HTMLDialogElement>('[data-menu]');
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+  const closeBtn = document.querySelector<HTMLButtonElement>('[data-menu-close]');
+
+  const onScroll = () => {
+    header?.classList.toggle('is-scrolled', window.scrollY > 24);
+  };
+
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const openMenu = () => {
+    if (!menu) return;
+    menu.showModal();
+    openBtn?.setAttribute('aria-expanded', 'true');
+    document.documentElement.style.overflow = 'hidden';
+  };
+
+  const closeMenu = () => {
+    menu?.close();
+  };
+
+  openBtn?.addEventListener('click', openMenu);
+  closeBtn?.addEventListener('click', closeMenu);
+
+  menu?.addEventListener('close', () => {
+    openBtn?.setAttribute('aria-expanded', 'false');
+    document.documentElement.style.overflow = '';
+    openBtn?.focus();
+  });
+
+  // Clicking the backdrop closes the panel.
+  menu?.addEventListener('click', (event) => {
+    if (event.target === menu) closeMenu();
+  });
+
+  menu?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      menu.close();
+      document.documentElement.style.overflow = '';
+    });
+  });
+</script>

@@ -1,0 +1,192 @@
+---
+import Icon from './Icon.astro';
+import { localizePath } from '../i18n/routing';
+import type { Locale, SiteContent } from '../content/types';
+
+export interface Props {
+  locale: Locale;
+  content: SiteContent;
+  variant?: 'overlap' | 'flat';
+}
+
+const { locale, content: t, variant = 'overlap' } = Astro.props;
+const action = localizePath(locale, 'contact/');
+const today = new Date().toISOString().slice(0, 10);
+---
+
+<section class:list={['avail', `avail--${variant}`]} aria-label={t.actions.book}>
+  <div class="shell">
+    <form class="avail__form" method="get" action={action} data-avail-form>
+      <div class="avail__field">
+        <label for="avail-arrival">{t.form.arrival}</label>
+        <input
+          id="avail-arrival"
+          name="arrival"
+          type="date"
+          required
+          min={today}
+          data-avail-arrival
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="avail__field">
+        <label for="avail-departure">{t.form.departure}</label>
+        <input
+          id="avail-departure"
+          name="departure"
+          type="date"
+          required
+          min={today}
+          data-avail-departure
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="avail__field avail__field--guests">
+        <label for="avail-guests">{t.common.guests}</label>
+        <select id="avail-guests" name="guests" data-avail-guests>
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+      </div>
+
+      <button class="btn avail__submit" type="submit">
+        <span>{t.actions.book}</span>
+        <Icon name="arrow-right" class="btn__arrow" />
+      </button>
+    </form>
+    <p class="avail__note">{t.contactPage.response}</p>
+  </div>
+</section>
+
+<style>
+  .avail {
+    position: relative;
+    z-index: 5;
+  }
+
+  .avail--overlap {
+    margin-top: clamp(-3.5rem, -4vw, -2rem);
+  }
+
+  .avail__form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+    padding: clamp(1rem, 2.2vw, 1.5rem);
+    background: color-mix(in oklab, var(--color-cream) 82%, transparent);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--color-line);
+    box-shadow: 0 18px 44px -32px rgb(10 42 47 / 0.45);
+  }
+
+  .avail__field {
+    display: grid;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+
+  .avail__field label {
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .avail__field input,
+  .avail__field select {
+    width: 100%;
+    min-height: 2.6rem;
+    padding: 0.35rem 0.1rem;
+    border: 0;
+    border-bottom: 1px solid var(--color-line);
+    border-radius: 0;
+    background: transparent;
+    font-size: 0.92rem;
+    color: var(--color-ink);
+    transition: border-color 0.3s ease;
+  }
+
+  .avail__field input:hover,
+  .avail__field select:hover,
+  .avail__field input:focus,
+  .avail__field select:focus {
+    border-bottom-color: var(--color-ink);
+    outline: none;
+  }
+
+  .avail__submit {
+    min-height: 2.9rem;
+    width: 100%;
+    margin-top: 0.25rem;
+  }
+
+  .avail__submit:hover .btn__arrow {
+    transform: translateX(0.25rem);
+  }
+
+  .avail__note {
+    margin-top: 0.7rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    color: var(--color-ink-muted);
+  }
+
+  @media (min-width: 760px) {
+    .avail__form {
+      grid-template-columns: 1fr 1fr 0.7fr auto;
+      align-items: end;
+      gap: 1.25rem;
+      padding: 1.1rem 1.3rem 1.15rem;
+    }
+
+    .avail__submit {
+      width: auto;
+      padding-inline: 1.6rem;
+      white-space: nowrap;
+    }
+
+    .avail__note {
+      display: none;
+    }
+  }
+
+  html[lang='el'] .avail__field label {
+    text-transform: none;
+    letter-spacing: 0.05em;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-avail-form]').forEach((form) => {
+    const arrival = form.querySelector<HTMLInputElement>('[data-avail-arrival]');
+    const departure = form.querySelector<HTMLInputElement>('[data-avail-departure]');
+    if (!arrival || !departure) return;
+
+    const iso = (date: Date) => date.toISOString().slice(0, 10);
+
+    const sync = () => {
+      const now = new Date();
+      arrival.min = iso(now);
+      if (arrival.value) {
+        const next = new Date(arrival.value);
+        next.setDate(next.getDate() + 1);
+        departure.min = iso(next);
+        if (departure.value && departure.value <= arrival.value) departure.value = '';
+      } else {
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        departure.min = iso(tomorrow);
+      }
+    };
+
+    arrival.addEventListener('change', sync);
+    sync();
+  });
+</script>

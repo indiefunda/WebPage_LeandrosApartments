@@ -1,0 +1,12 @@
+---
+import RatesPage from '../../components/pages/RatesPage.astro';
+import type { Locale } from '../../content/types';
+
+export function getStaticPaths() {
+  return [{ params: { locale: 'el' } }, { params: { locale: 'fr' } }];
+}
+
+const { locale } = Astro.params;
+---
+
+<RatesPage locale={locale as Locale} />

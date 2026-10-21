@@ -1,0 +1,580 @@
+---
+import Icon from './Icon.astro';
+import { property } from '../data/property';
+import { firebaseConfig } from '../data/firebase';
+import { localizePath } from '../i18n/routing';
+import type { Locale, SiteContent } from '../content/types';
+
+export interface Props {
+  locale: Locale;
+  content: SiteContent;
+}
+
+const { locale, content: t } = Astro.props;
+
+const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID ?? firebaseConfig.projectId;
+const apiKey = import.meta.env.PUBLIC_FIREBASE_API_KEY ?? firebaseConfig.apiKey;
+
+// Fallback copy for the (rare) case where the database is not configured and
+// the enquiry is handed to WhatsApp instead.
+const handoff: Record<Locale, { title: string; body: string }> = {
+  en: {
+    title: 'Your message is ready.',
+    body: 'We have opened WhatsApp with your details. Press send there and we will answer as soon as we can.',
+  },
+  el: {
+    title: 'Το μήνυμά σας είναι έτοιμο.',
+    body: 'Ανοίξαμε το WhatsApp με τα στοιχεία σας. Πατήστε αποστολή και θα σας απαντήσουμε το συντομότερο.',
+  },
+  fr: {
+    title: 'Votre message est prêt.',
+    body: 'WhatsApp s’est ouvert avec vos informations. Appuyez sur envoyer et nous vous répondrons dès que possible.',
+  },
+};
+
+const today = new Date().toISOString().slice(0, 10);
+const privacyHref = localizePath(locale, 'privacy/');
+---
+
+<div class="enquiry" data-enquiry data-project={projectId} data-key={apiKey} data-locale={locale}>
+  <form class="enquiry__form" data-enquiry-form novalidate>
+    <div class="form-grid">
+      <div class="field field--wide">
+        <label for="apartment">{t.form.apartment}</label>
+        <select class="select" id="apartment" name="apartment">
+          <option value="">{t.form.anyApartment}</option>
+          {
+            t.units.map((unit) => (
+              <option value={unit.slug}>
+                {unit.number} — {unit.name}
+              </option>
+            ))
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="arrival">{t.form.arrival} *</label>
+        <input
+          class="input"
+          id="arrival"
+          name="arrival"
+          type="date"
+          required
+          min={today}
+          autocomplete="off"
+          data-field="arrival"
+          aria-describedby="err-arrival"
+        />
+        <p class="field__error" id="err-arrival" data-error="arrival" hidden></p>
+      </div>
+
+      <div class="field">
+        <label for="departure">{t.form.departure} *</label>
+        <input
+          class="input"
+          id="departure"
+          name="departure"
+          type="date"
+          required
+          min={today}
+          autocomplete="off"
+          data-field="departure"
+          aria-describedby="err-departure"
+        />
+        <p class="field__error" id="err-departure" data-error="departure" hidden></p>
+      </div>
+
+      <div class="field">
+        <label for="adults">{t.form.adults}</label>
+        <select class="select" id="adults" name="adults">
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="children">{t.form.children}</label>
+        <select class="select" id="children" name="children">
+          <option value="0" selected>{t.form.childrenNone}</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="name">{t.form.name} *</label>
+        <input
+          class="input"
+          id="name"
+          name="name"
+          type="text"
+          required
+          autocomplete="name"
+          data-field="name"
+          aria-describedby="err-name"
+        />
+        <p class="field__error" id="err-name" data-error="name" hidden></p>
+      </div>
+
+      <div class="field">
+        <label for="email">{t.form.email} *</label>
+        <input
+          class="input"
+          id="email"
+          name="email"
+          type="email"
+          required
+          autocomplete="email"
+          inputmode="email"
+          data-field="email"
+          aria-describedby="err-email"
+        />
+        <p class="field__error" id="err-email" data-error="email" hidden></p>
+      </div>
+
+      <div class="field field--wide">
+        <label for="phone">{t.form.phone}</label>
+        <input class="input" id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" />
+      </div>
+
+      <div class="field field--wide">
+        <label for="message">{t.form.message}</label>
+        <textarea
+          class="textarea"
+          id="message"
+          name="message"
+          rows="4"
+          placeholder={t.form.messagePlaceholder}></textarea>
+      </div>
+    </div>
+
+    <div class="consent">
+      <input type="checkbox" id="consent" name="consent" required data-field="consent" />
+      <label for="consent">
+        {t.form.consent}
+        <a class="text-link" href={privacyHref}>{t.form.consentLink}</a>
+      </label>
+    </div>
+    <p class="field__error field__error--consent" data-error="consent" hidden></p>
+
+    <div class="hp" aria-hidden="true">
+      <label for="company">Company</label>
+      <input id="company" name="company" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class="enquiry__submit">
+      <button class="btn" type="submit" data-submit>
+        <span data-submit-label>{t.form.submit}</span>
+        <Icon name="arrow-right" class="btn__arrow" />
+      </button>
+      <p class="enquiry__direct">
+        {t.form.orWrite}
+        <a class="text-link" href={`https://wa.me/${property.whatsapp}`} target="_blank" rel="noopener">
+          {t.actions.whatsapp}
+        </a>
+        ·
+        <a class="text-link" href={`tel:${property.phones.mobile1}`}>{property.phones.mobile1Display}</a>
+      </p>
+    </div>
+
+    <p class="form-note">{t.contactPage.formNote}</p>
+  </form>
+
+  <div class="enquiry__panel" data-enquiry-success hidden role="status" aria-live="polite">
+    <p class="enquiry__panel-title" data-success-title>{t.form.successTitle}</p>
+    <p class="enquiry__panel-body" data-success-body>{t.form.successBody}</p>
+    <div class="enquiry__panel-actions">
+      <a
+        class="btn btn--ghost btn--sm"
+        href={`https://wa.me/${property.whatsapp}`}
+        target="_blank"
+        rel="noopener"
+      >
+        {t.form.successWhatsapp}
+      </a>
+      <a class="btn btn--ghost btn--sm" href={`tel:${property.phones.mobile1}`}>{t.actions.call}</a>
+    </div>
+  </div>
+
+  <div class="enquiry__panel enquiry__panel--error" data-enquiry-error hidden role="alert">
+    <p class="enquiry__panel-title">{t.form.errorTitle}</p>
+    <p class="enquiry__panel-body">{t.form.errorBody}</p>
+    <div class="enquiry__panel-actions">
+      <a
+        class="btn btn--sm"
+        data-whatsapp-fallback
+        href={`https://wa.me/${property.whatsapp}`}
+        target="_blank"
+        rel="noopener"
+      >
+        {t.form.errorWhatsapp}
+      </a>
+    </div>
+  </div>
+
+  <script
+    type="application/json"
+    data-enquiry-copy
+    set:html={JSON.stringify({
+      required: t.form.required,
+      invalidEmail: t.form.invalidEmail,
+      invalidDates: t.form.invalidDates,
+      invalidDateOrder: t.form.invalidDateOrder,
+      submitting: t.form.submitting,
+      submit: t.form.submit,
+      handoff: handoff[locale],
+      labels: {
+        apartment: t.form.apartment,
+        arrival: t.form.arrival,
+        departure: t.form.departure,
+        adults: t.form.adults,
+        children: t.form.children,
+        name: t.form.name,
+        email: t.form.email,
+        phone: t.form.phone,
+        message: t.form.message,
+      },
+      anyApartment: t.form.anyApartment,
+      whatsapp: property.whatsapp,
+    })}
+  />
+</div>
+
+<style>
+  .enquiry__form {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem 1.1rem;
+  }
+
+  .field__error {
+    font-size: 0.72rem;
+    color: var(--color-clay);
+    letter-spacing: 0.01em;
+  }
+
+  .field__error[hidden] {
+    display: none;
+  }
+
+  .field--wide {
+    grid-column: 1 / -1;
+  }
+
+  .input[aria-invalid='true'],
+  .textarea[aria-invalid='true'],
+  .select[aria-invalid='true'] {
+    border-color: var(--color-clay);
+  }
+
+  .consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+  }
+
+  .consent input {
+    flex: none;
+    width: 1.05rem;
+    height: 1.05rem;
+    margin-top: 0.22rem;
+    accent-color: var(--color-sea);
+  }
+
+  .field__error--consent {
+    margin-top: -0.9rem;
+  }
+
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .enquiry__submit {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+  }
+
+  .enquiry__direct {
+    font-size: 0.78rem;
+    color: var(--color-ink-muted);
+  }
+
+  .form-note {
+    font-size: 0.72rem;
+    color: var(--color-ink-muted);
+    max-width: 46ch;
+  }
+
+  .enquiry__form[hidden] {
+    display: none;
+  }
+
+  .enquiry__panel {
+    display: grid;
+    gap: 0.75rem;
+    padding: clamp(1.4rem, 3vw, 2.2rem);
+    border: 1px solid var(--color-line);
+    background: color-mix(in oklab, var(--color-cream) 70%, transparent);
+  }
+
+  .enquiry__panel[hidden] {
+    display: none;
+  }
+
+  .enquiry__panel--error {
+    border-color: color-mix(in oklab, var(--color-clay) 45%, transparent);
+  }
+
+  .enquiry__panel-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    line-height: 1.1;
+  }
+
+  .enquiry__panel-body {
+    font-size: 0.94rem;
+    color: var(--color-ink-soft);
+    max-width: 44ch;
+  }
+
+  .enquiry__panel-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.4rem;
+  }
+
+  @media (min-width: 620px) {
+    .form-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-enquiry]').forEach((root) => {
+    const form = root.querySelector<HTMLFormElement>('[data-enquiry-form]');
+    const dataEl = root.querySelector<HTMLScriptElement>('[data-enquiry-copy]');
+    const success = root.querySelector<HTMLElement>('[data-enquiry-success]');
+    const error = root.querySelector<HTMLElement>('[data-enquiry-error]');
+    const submit = root.querySelector<HTMLButtonElement>('[data-submit]');
+    const submitLabel = root.querySelector<HTMLElement>('[data-submit-label]');
+    if (!form || !dataEl || !success || !error) return;
+
+    type Copy = {
+      required: string;
+      invalidEmail: string;
+      invalidDates: string;
+      invalidDateOrder: string;
+      submitting: string;
+      submit: string;
+      handoff: { title: string; body: string };
+      labels: Record<string, string>;
+      anyApartment: string;
+      whatsapp: string;
+    };
+
+    const copy = JSON.parse(dataEl.textContent || '{}') as Copy;
+    const projectId = root.dataset.project ?? '';
+    const apiKey = root.dataset.key ?? '';
+    const locale = root.dataset.locale ?? 'en';
+
+    const defaultTitle = success.querySelector<HTMLElement>('[data-success-title]')?.textContent ?? '';
+    const defaultBody = success.querySelector<HTMLElement>('[data-success-body]')?.textContent ?? '';
+
+    const get = (name: string) =>
+      form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
+    const errorEl = (name: string) => form.querySelector<HTMLElement>(`[data-error="${name}"]`);
+
+    const setError = (name: string, message: string | null) => {
+      const field = get(name);
+      const el = errorEl(name);
+      if (!el) return;
+      if (message) {
+        el.textContent = message;
+        el.hidden = false;
+        field?.setAttribute('aria-invalid', 'true');
+      } else {
+        el.hidden = true;
+        el.textContent = '';
+        field?.removeAttribute('aria-invalid');
+      }
+    };
+
+    const read = () => ({
+      apartment: get('apartment')?.value ?? '',
+      arrival: get('arrival')?.value ?? '',
+      departure: get('departure')?.value ?? '',
+      adults: get('adults')?.value ?? '2',
+      children: get('children')?.value ?? '0',
+      name: (get('name')?.value ?? '').trim(),
+      email: (get('email')?.value ?? '').trim(),
+      phone: (get('phone')?.value ?? '').trim(),
+      message: (get('message')?.value ?? '').trim(),
+      consent: (get('consent') as HTMLInputElement | null)?.checked ?? false,
+    });
+
+    const validate = (values: ReturnType<typeof read>) => {
+      let ok = true;
+      setError('name', null);
+      setError('email', null);
+      setError('arrival', null);
+      setError('departure', null);
+      setError('consent', null);
+
+      if (!values.name) {
+        setError('name', copy.required);
+        ok = false;
+      }
+      if (!values.email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(values.email)) {
+        setError('email', copy.invalidEmail);
+        ok = false;
+      }
+      if (!values.arrival || !values.departure) {
+        setError('arrival', copy.invalidDates);
+        ok = false;
+      } else if (values.departure <= values.arrival) {
+        setError('departure', copy.invalidDateOrder);
+        ok = false;
+      }
+      if (!values.consent) {
+        setError('consent', copy.required);
+        ok = false;
+      }
+
+      if (!ok) {
+        form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      }
+      return ok;
+    };
+
+    const waMessage = (values: ReturnType<typeof read>) => {
+      const selected = Array.from(form.querySelectorAll<HTMLOptionElement>('#apartment option')).find(
+        (item) => item.value === values.apartment,
+      );
+      const apartment = selected?.textContent?.trim() || copy.anyApartment;
+      const lines = [
+        `${copy.labels.apartment}: ${apartment}`,
+        `${copy.labels.arrival}: ${values.arrival}`,
+        `${copy.labels.departure}: ${values.departure}`,
+        `${copy.labels.adults}: ${values.adults} · ${copy.labels.children}: ${values.children}`,
+        `${copy.labels.name}: ${values.name}`,
+        `${copy.labels.email}: ${values.email}`,
+        values.phone ? `${copy.labels.phone}: ${values.phone}` : '',
+        values.message ? `${copy.labels.message}: ${values.message}` : '',
+      ].filter(Boolean);
+      return lines.join('\n');
+    };
+
+    const showSuccess = (title: string, body: string) => {
+      form.hidden = true;
+      success.hidden = false;
+      error.hidden = true;
+      const titleEl = success.querySelector<HTMLElement>('[data-success-title]');
+      const bodyEl = success.querySelector<HTMLElement>('[data-success-body]');
+      if (titleEl) titleEl.textContent = title;
+      if (bodyEl) bodyEl.textContent = body;
+      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    const showError = (values: ReturnType<typeof read>) => {
+      error.hidden = false;
+      const fallback = error.querySelector<HTMLAnchorElement>('[data-whatsapp-fallback]');
+      if (fallback) {
+        fallback.href = `https://wa.me/${copy.whatsapp}?text=${encodeURIComponent(waMessage(values))}`;
+      }
+      error.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    // Prefill from the availability bar on the home page.
+    const params = new URLSearchParams(window.location.search);
+    const prefill = ['arrival', 'departure', 'apartment'];
+    prefill.forEach((key) => {
+      const value = params.get(key);
+      const field = get(key);
+      if (value && field) field.value = value;
+    });
+    const guests = params.get('guests');
+    if (guests) {
+      const adultsField = get('adults');
+      if (adultsField) adultsField.value = guests;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if ((get('company') as HTMLInputElement | null)?.value) return;
+
+      const values = read();
+      if (!validate(values)) return;
+
+      const button = submit;
+      button?.setAttribute('disabled', 'true');
+      if (submitLabel) submitLabel.textContent = copy.submitting;
+
+      const payload = {
+        ...values,
+        locale,
+        page: window.location.href,
+        createdAt: new Date().toISOString(),
+      };
+
+      if (!projectId || !apiKey) {
+        window.open(
+          `https://wa.me/${copy.whatsapp}?text=${encodeURIComponent(waMessage(values))}`,
+          '_blank',
+          'noopener',
+        );
+        showSuccess(copy.handoff.title, copy.handoff.body);
+        return;
+      }
+
+      const fields: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(payload)) {
+        fields[key] = { stringValue: String(value) };
+      }
+
+      try {
+        const response = await fetch(
+          `https://firestore.googleapis.com/v1/projects/${projectId}/databases/default/documents/enquiries?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fields }),
+          },
+        );
+
+        if (!response.ok) throw new Error(`Firestore ${response.status}`);
+        showSuccess(defaultTitle, defaultBody);
+      } catch {
+        showError(values);
+        button?.removeAttribute('disabled');
+        if (submitLabel) submitLabel.textContent = copy.submit;
+        return;
+      }
+
+      button?.removeAttribute('disabled');
+      if (submitLabel) submitLabel.textContent = copy.submit;
+    });
+  });
+</script>

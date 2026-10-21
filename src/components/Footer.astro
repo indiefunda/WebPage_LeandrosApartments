@@ -1,0 +1,228 @@
+---
+import type { Locale, SiteContent } from '../content/types';
+import { localeHome, localizePath } from '../i18n/routing';
+import { property } from '../data/property';
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import LangSwitcher from './LangSwitcher.astro';
+
+export interface Props {
+  locale: Locale;
+  content: SiteContent;
+  path: string;
+}
+
+const { locale, content: t, path } = Astro.props;
+
+const navLinks = [
+  { label: t.nav.apartments, path: 'apartments/' },
+  { label: t.nav.location, path: 'location/' },
+  { label: t.nav.rates, path: 'rates/' },
+  { label: t.nav.contact, path: 'contact/' },
+];
+---
+
+<footer class="site-footer">
+  <div class="shell">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <Logo href={localeHome(locale)} label={t.brand.name} />
+        <p class="footer__tagline">{t.footer.tagline}</p>
+        <p class="footer__mte">
+          <span>{t.footer.mteLabel}</span>
+          <strong>{t.footer.mte}</strong>
+        </p>
+      </div>
+
+      <div class="footer__col">
+        <h2 class="footer__heading">{t.footer.addressTitle}</h2>
+        <address class="footer__address">
+          {t.footer.address.map((line) => <span>{line}</span>)}
+        </address>
+        <a class="footer__maplink" href={property.geoUrl} target="_blank" rel="noopener">
+          {t.locationPage.mapCta}
+          <Icon name="arrow-up-right" class="icon-xs" />
+        </a>
+      </div>
+
+      <div class="footer__col">
+        <h2 class="footer__heading">{t.footer.contactTitle}</h2>
+        <ul class="footer__links">
+          <li><a href={`tel:${property.phones.landline}`}>{property.phones.landlineDisplay}</a></li>
+          <li><a href={`tel:${property.phones.mobile1}`}>{property.phones.mobile1Display}</a></li>
+          <li><a href={`tel:${property.phones.mobile2}`}>{property.phones.mobile2Display}</a></li>
+          <li>
+            <a href={`https://wa.me/${property.whatsapp}`} target="_blank" rel="noopener">
+              {t.actions.whatsapp}
+            </a>
+          </li>
+        </ul>
+        <LangSwitcher locale={locale} path={path} label={t.actions.language} />
+      </div>
+
+      <div class="footer__col">
+        <h2 class="footer__heading">{t.footer.navigateTitle}</h2>
+        <ul class="footer__links">
+          {
+            navLinks.map((link) => (
+              <li>
+                <a href={localizePath(locale, link.path)}>{link.label}</a>
+              </li>
+            ))
+          }
+          <li><a href={localizePath(locale, 'privacy/')}>{t.footer.privacy}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>{t.footer.rights}</p>
+      <p class="footer__note">{t.footer.photography}</p>
+      <a class="footer__top-link" href="#top">
+        {t.footer.backToTop}
+        <Icon name="arrow-up-right" class="icon-xs" />
+      </a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--color-line);
+    background: var(--color-paper-deep);
+    color: var(--color-ink);
+  }
+
+  .footer__top {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+
+  .footer__brand {
+    display: grid;
+    gap: 1.1rem;
+    align-content: start;
+  }
+
+  .footer__tagline {
+    max-width: 22rem;
+    color: var(--color-ink-soft);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .footer__mte {
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--color-ink-muted);
+  }
+
+  .footer__mte strong {
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  .footer__heading {
+    font-family: var(--font-sans);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    margin-bottom: 1rem;
+  }
+
+  .footer__address {
+    display: grid;
+    gap: 0.15rem;
+    font-style: normal;
+    color: var(--color-ink-soft);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .footer__maplink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.9rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 0.3rem;
+  }
+
+  .footer__links {
+    display: grid;
+    gap: 0.45rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.95rem;
+  }
+
+  .footer__links a {
+    text-decoration: none;
+    color: var(--color-ink-soft);
+    transition: color 0.3s ease;
+  }
+
+  .footer__links a:hover {
+    color: var(--color-clay);
+  }
+
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--color-line);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    color: var(--color-ink-muted);
+  }
+
+  .footer__note {
+    opacity: 0.8;
+  }
+
+  .footer__top-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 0.15rem;
+  }
+
+  .footer__top-link:hover {
+    border-bottom-color: currentColor;
+  }
+
+  .icon-xs {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+
+  @media (min-width: 720px) {
+    .footer__top {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer__top {
+      grid-template-columns: 1.5fr 1fr 1fr 0.8fr;
+      gap: 3rem;
+    }
+  }
+</style>

@@ -1,0 +1,113 @@
+---
+import { localeMeta, locales, localizePath } from '../i18n/routing';
+import type { Locale } from '../content/types';
+
+export interface Props {
+  locale: Locale;
+  path: string;
+  variant?: 'compact' | 'full';
+  label: string;
+  tone?: 'ink' | 'light';
+}
+
+const { locale, path, variant = 'compact', label, tone = 'ink' } = Astro.props;
+---
+
+<nav class:list={['lang', `lang--${variant}`, `lang--${tone}`]} aria-label={label}>
+  <ul class="lang__list">
+    {
+      locales.map((item) => (
+        <li>
+          <a
+            class:list={['lang__link', item === locale && 'is-current']}
+            href={localizePath(item, path)}
+            hreflang={localeMeta[item].htmlLang}
+            lang={localeMeta[item].htmlLang}
+            aria-current={item === locale ? 'true' : undefined}
+          >
+            {variant === 'full' ? localeMeta[item].label : localeMeta[item].short}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .lang__list {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .lang__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.1rem;
+    min-height: 2.75rem;
+    padding: 0 0.45rem;
+    font-family: var(--font-sans);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: var(--color-ink-muted);
+    transition: color 0.3s ease;
+  }
+
+  .lang__link:hover {
+    color: var(--color-ink);
+  }
+
+  .lang__link.is-current {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .lang__link.is-current::after {
+    content: '';
+  }
+
+  .lang--light .lang__link {
+    color: rgb(247 242 233 / 0.6);
+  }
+
+  .lang--light .lang__link:hover,
+  .lang--light .lang__link.is-current {
+    color: var(--color-paper);
+  }
+
+  .lang--full .lang__list {
+    display: grid;
+    gap: 0;
+    width: 100%;
+  }
+
+  .lang--full .lang__link {
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 2.9rem;
+    padding: 0.2rem 0;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--color-ink-soft);
+  }
+
+  .lang--full .lang__link.is-current {
+    color: var(--color-clay);
+  }
+
+  .lang--full .lang__link.is-current::before {
+    content: '—';
+    margin-right: 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+  }
+</style>

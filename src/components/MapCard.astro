@@ -1,0 +1,202 @@
+---
+import Icon from './Icon.astro';
+import { property } from '../data/property';
+import type { SiteContent } from '../content/types';
+
+export interface Props {
+  content: SiteContent;
+  title: string;
+  note: string;
+  cta: string;
+}
+
+const { title, note, cta } = Astro.props;
+
+const bbox = [
+  property.geo.lng - 0.012,
+  property.geo.lat - 0.008,
+  property.geo.lng + 0.012,
+  property.geo.lat + 0.008,
+].join('%2C');
+
+const osmSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${property.geo.lat}%2C${property.geo.lng}`;
+---
+
+<div class="map" data-map data-src={osmSrc}>
+  <div class="map__art" data-map-art>
+    <svg class="map__compass" viewBox="0 0 120 120" aria-hidden="true">
+      <circle cx="60" cy="60" r="46" fill="none" stroke="currentColor" stroke-width="0.6"></circle>
+      <circle
+        cx="60"
+        cy="60"
+        r="34"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="0.4"
+        stroke-dasharray="1 4"></circle>
+      <path d="M60 12v96M12 60h96" stroke="currentColor" stroke-width="0.4" opacity="0.5"></path>
+      <path d="M60 28 66 60l-6 32-6-32Z" fill="currentColor" opacity="0.85"></path>
+      <text x="60" y="8" text-anchor="middle" font-size="6" letter-spacing="2" fill="currentColor">N</text>
+    </svg>
+    <p class="map__coords">{property.geo.lat.toFixed(4)}° N · {property.geo.lng.toFixed(4)}° E</p>
+    <p class="map__place">{title}</p>
+  </div>
+
+  <div class="map__body">
+    <p class="map__note">{note}</p>
+    <div class="map__actions">
+      <button class="btn btn--ghost btn--sm" type="button" data-map-load>
+        <Icon name="pin" class="map__icon" />
+        {cta}
+      </button>
+      <a class="map__link" href={property.geoUrl} target="_blank" rel="noopener">
+        Google Maps
+        <Icon name="arrow-up-right" class="map__icon" />
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .map {
+    display: grid;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper-deep);
+    min-height: 15rem;
+  }
+
+  .map__art {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 0.6rem;
+    padding: 2.5rem 1.5rem;
+    color: var(--color-sea);
+    overflow: hidden;
+  }
+
+  .map__art::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgb(22 33 31 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(22 33 31 / 0.05) 1px, transparent 1px);
+    background-size: 2.2rem 2.2rem;
+    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  }
+
+  .map__compass {
+    width: 7rem;
+    height: 7rem;
+    position: relative;
+    color: var(--color-sea);
+    opacity: 0.9;
+  }
+
+  .map__coords {
+    position: relative;
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    color: var(--color-ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .map__place {
+    position: relative;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    color: var(--color-ink);
+  }
+
+  .map__body {
+    display: grid;
+    gap: 1.1rem;
+    align-content: center;
+    padding: clamp(1.25rem, 2.5vw, 1.9rem);
+    border-top: 1px solid var(--color-line);
+    background: color-mix(in oklab, var(--color-cream) 55%, transparent);
+  }
+
+  .map__note {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+    max-width: 34ch;
+  }
+
+  .map__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  :global(.map__icon) {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  .map__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 0.35rem;
+  }
+
+  .map__link:hover {
+    border-color: currentColor;
+  }
+
+  .map iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 22rem;
+    border: 0;
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 760px) {
+    .map {
+      grid-template-columns: 1.1fr 1fr;
+    }
+
+    .map__body {
+      border-top: 0;
+      border-left: 1px solid var(--color-line);
+    }
+  }
+
+  html[lang='el'] .map__link {
+    text-transform: none;
+    letter-spacing: 0.03em;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-map]').forEach((root) => {
+    const button = root.querySelector<HTMLButtonElement>('[data-map-load]');
+    const src = root.dataset.src;
+    if (!button || !src) return;
+
+    button.addEventListener('click', () => {
+      const frame = document.createElement('iframe');
+      frame.src = src;
+      frame.title = 'OpenStreetMap — Leandros Apartments, Platys Gialos, Sifnos';
+      frame.loading = 'lazy';
+      frame.referrerPolicy = 'no-referrer';
+      const art = root.querySelector<HTMLElement>('[data-map-art]');
+      const body = root.querySelector<HTMLElement>('.map__body');
+      art?.remove();
+      body?.remove();
+      root.append(frame);
+    });
+  });
+</script>

@@ -1,0 +1,66 @@
+---
+import { Picture } from 'astro:assets';
+import { photos, type PhotoKey } from '../data/photos';
+import type { Locale } from '../content/types';
+
+export interface Props {
+  photo: PhotoKey;
+  locale: Locale;
+  alt?: string;
+  ratio?: string;
+  class?: string;
+  widths?: number[];
+  sizes?: string;
+  loading?: 'eager' | 'lazy';
+  priority?: boolean;
+  caption?: string;
+  quality?: number;
+  objectPosition?: string;
+}
+
+const {
+  photo,
+  locale,
+  alt,
+  ratio = '4 / 5',
+  class: className = '',
+  widths = [420, 640, 900, 1200],
+  sizes = '(min-width: 1024px) 50vw, 100vw',
+  loading = 'lazy',
+  priority = false,
+  caption,
+  quality = 72,
+  objectPosition = 'center',
+} = Astro.props;
+
+const item = photos[photo];
+const description = alt ?? item.alt[locale];
+---
+
+<figure class:list={['media-frame', className]}>
+  <div class="media media--hover" style={`aspect-ratio:${ratio};--pos:${objectPosition}`}>
+    <Picture
+      src={item.src}
+      formats={['avif', 'webp']}
+      fallbackFormat="jpeg"
+      widths={widths}
+      sizes={sizes}
+      alt={description}
+      loading={loading}
+      fetchpriority={priority ? 'high' : 'auto'}
+      decoding={priority ? 'sync' : 'async'}
+      quality={quality}
+    />
+  </div>
+  {caption && <figcaption class="figure-caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .media-frame {
+    margin: 0;
+  }
+
+  .media-frame .media img {
+    object-position: var(--pos);
+  }
+</style>

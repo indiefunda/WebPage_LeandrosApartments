@@ -1,0 +1,474 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../PageHero.astro';
+import Faq from '../Faq.astro';
+import Icon from '../Icon.astro';
+import { getContent } from '../../content';
+import type { Locale } from '../../content/types';
+import { localizePath } from '../../i18n/routing';
+import { property, rates } from '../../data/property';
+import { breadcrumbs } from '../../data/schema';
+
+export interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getContent(locale);
+const contactHref = localizePath(locale, 'contact/');
+
+const priceFor = (slug: string) => rates.find((rate) => rate.slug === slug)?.range ?? property.priceRange;
+
+const crumbs = breadcrumbs(
+  [
+    { name: t.nav.home, path: '' },
+    { name: t.nav.rates, path: 'rates/' },
+  ],
+  locale,
+);
+---
+
+<BaseLayout locale={locale} path="rates/" meta={t.meta.rates} ogImage="/og/rates.jpg" jsonLd={crumbs}>
+  <PageHero
+    eyebrow={t.ratesPage.eyebrow}
+    title={t.ratesPage.title}
+    intro={t.ratesPage.intro}
+    meta={`${property.priceRange} · ${t.common.perNight}`}
+  />
+
+  <section class="section-tight rates">
+    <div class="shell">
+      <div class="rates__table-wrap">
+        <table class="rates__table">
+          <caption class="visually-hidden">{t.ratesPage.tableTitle}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{t.ratesPage.apartmentHeader}</th>
+              <th scope="col">{t.ratesPage.guestsHeader}</th>
+              <th scope="col" class="rates__price-col">{t.ratesPage.priceHeader}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              t.units.map((unit) => (
+                <tr>
+                  <th scope="row">
+                    <a href={localizePath(locale, `apartments/${unit.slug}/`)}>
+                      <span class="rates__number">{unit.number}</span>
+                      {unit.name}
+                    </a>
+                  </th>
+                  <td data-label={t.ratesPage.guestsHeader}>{unit.sleeps}</td>
+                  <td data-label={t.ratesPage.priceHeader} class="rates__price-col">
+                    {priceFor(unit.slug)}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="rates__note">{t.ratesPage.tableNote}</p>
+    </div>
+  </section>
+
+  <section class="section-tight rates-block">
+    <div class="shell rates-block__grid">
+      <div class="rates-block__col">
+        <p class="eyebrow">{t.common.included}</p>
+        <h2 class="rates-block__title">{t.ratesPage.includedTitle}</h2>
+        <ul class="rates-list">
+          {
+            t.ratesPage.included.map((item) => (
+              <li>
+                <Icon name="check" class="icon-sm rates-list__icon" />
+                <span>{item}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="rates-block__col rates-block__col--offer">
+        <p class="eyebrow eyebrow--light">{t.home.offers.eyebrow}</p>
+        <h2 class="rates-block__title">{t.home.offers.title}</h2>
+        <p class="rates-block__text">{t.ratesPage.offersBody}</p>
+        <p class="rates-block__small">{t.ratesPage.offersNote}</p>
+        <a class="btn btn--light btn--sm" href={`${contactHref}`}>
+          {t.actions.askOffers}
+          <Icon name="arrow-right" class="btn__arrow" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight policies">
+    <div class="shell policies__grid">
+      <div class="policy">
+        <h2 class="policy__title">{t.ratesPage.paymentTitle}</h2>
+        {t.ratesPage.paymentBody.map((paragraph) => <p class="policy__text">{paragraph}</p>)}
+      </div>
+
+      <div class="policy">
+        <h2 class="policy__title">{t.ratesPage.cancellationTitle}</h2>
+        <ul class="policy__list">
+          {t.ratesPage.cancellation.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+
+      <div class="policy">
+        <h2 class="policy__title">{t.ratesPage.checkTitle}</h2>
+        <p class="policy__text">{t.ratesPage.checkBody}</p>
+        <p class="policy__meta">{property.phones.landlineDisplay}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section faq-section">
+    <div class="shell faq-section__grid">
+      <Faq items={t.ratesPage.faq} title={t.ratesPage.faqTitle} />
+      <div class="faq-aside">
+        <p class="eyebrow">{t.home.closing.eyebrow}</p>
+        <p class="faq-aside__title">{t.home.closing.title}</p>
+        <p class="faq-aside__body">{t.contactPage.response}</p>
+        <div class="faq-aside__actions">
+          <a class="btn" href={contactHref}>
+            {t.ratesPage.cta}
+            <Icon name="arrow-right" class="btn__arrow" />
+          </a>
+          <a
+            class="btn btn--ghost"
+            href={`https://wa.me/${property.whatsapp}`}
+            target="_blank"
+            rel="noopener"
+          >
+            <Icon name="whatsapp" class="icon-sm" />
+            {t.actions.whatsapp}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .rates__table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .rates__table thead th {
+    font-family: var(--font-sans);
+    font-size: 0.64rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--color-ink);
+  }
+
+  .rates__table tbody th,
+  .rates__table tbody td {
+    padding-block: 1.15rem;
+    border-bottom: 1px solid var(--color-line);
+    font-weight: 400;
+    vertical-align: baseline;
+  }
+
+  .rates__table tbody th a {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+    text-decoration: none;
+    display: inline-flex;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+
+  .rates__table tbody th a:hover {
+    color: var(--color-clay);
+  }
+
+  .rates__number {
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    color: var(--color-ink-muted);
+    text-transform: uppercase;
+  }
+
+  .rates__table tbody td {
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+  }
+
+  .rates__price-col {
+    text-align: right;
+    font-family: var(--font-display);
+    font-size: 1.15rem !important;
+    color: var(--color-ink) !important;
+    white-space: nowrap;
+  }
+
+  .rates__note {
+    margin-top: 1.25rem;
+    max-width: 62ch;
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: var(--color-ink-muted);
+  }
+
+  .rates-block {
+    background: var(--color-paper-deep);
+    border-block: 1px solid var(--color-line);
+    padding-block: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  .rates-block__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .rates-block__col {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+  }
+
+  .rates-block__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 2.8vw, 2.4rem);
+    line-height: 1.05;
+  }
+
+  .rates-list {
+    display: grid;
+    gap: 0.6rem;
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+  }
+
+  .rates-list li {
+    display: flex;
+    gap: 0.65rem;
+    align-items: baseline;
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--color-line-soft);
+  }
+
+  .rates-list__icon {
+    flex: none;
+    color: var(--color-olive);
+    transform: translateY(0.12em);
+  }
+
+  .rates-block__col--offer {
+    padding: clamp(1.4rem, 3vw, 2.25rem);
+    background: var(--color-clay);
+    color: var(--color-cream);
+    align-content: start;
+  }
+
+  .rates-block__col--offer .rates-block__title {
+    color: var(--color-cream);
+  }
+
+  .rates-block__text {
+    color: rgb(252 250 246 / 0.86);
+    line-height: 1.65;
+    font-size: 0.92rem;
+  }
+
+  .rates-block__small {
+    font-size: 0.76rem;
+    color: rgb(252 250 246 / 0.7);
+    font-style: italic;
+  }
+
+  .rates-block__col--offer .btn {
+    justify-self: start;
+    margin-top: 0.4rem;
+  }
+
+  .policies__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .policy {
+    display: grid;
+    gap: 0.8rem;
+    align-content: start;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .policy__title {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    line-height: 1.15;
+  }
+
+  .policy__text {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--color-ink-soft);
+  }
+
+  .policy__list {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+  }
+
+  .policy__list li {
+    padding-left: 1rem;
+    position: relative;
+  }
+
+  .policy__list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 0.3rem;
+    height: 1px;
+    background: var(--color-clay);
+  }
+
+  .policy__meta {
+    margin-top: 0.4rem;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+  }
+
+  .faq-section {
+    background: color-mix(in oklab, var(--color-paper-warm) 55%, var(--color-paper));
+    border-top: 1px solid var(--color-line);
+  }
+
+  .faq-section__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .faq-aside {
+    display: grid;
+    gap: 0.9rem;
+    align-content: start;
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    background: var(--color-sea);
+    color: var(--color-paper);
+    position: sticky;
+    top: calc(var(--header-h) + 1.5rem);
+  }
+
+  .faq-aside__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    line-height: 1.1;
+  }
+
+  .faq-aside__body {
+    font-size: 0.86rem;
+    color: rgb(247 242 233 / 0.75);
+    line-height: 1.6;
+  }
+
+  .faq-aside__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.4rem;
+  }
+
+  @media (min-width: 700px) {
+    .rates-block__grid {
+      grid-template-columns: 1.15fr 0.85fr;
+    }
+
+    .policies__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2.5rem;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .faq-section__grid {
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 4rem;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .rates__table thead {
+      display: none;
+    }
+
+    .rates__table,
+    .rates__table tbody,
+    .rates__table tr,
+    .rates__table th,
+    .rates__table td {
+      display: block;
+      width: 100%;
+    }
+
+    .rates__table tr {
+      padding-block: 1rem;
+      border-bottom: 1px solid var(--color-line);
+    }
+
+    .rates__table tbody th,
+    .rates__table tbody td {
+      border: 0;
+      padding: 0.15rem 0;
+    }
+
+    .rates__table tbody td {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .rates__table tbody td::before {
+      content: attr(data-label);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-ink-muted);
+    }
+
+    .rates__price-col {
+      text-align: left;
+    }
+  }
+
+  html[lang='el'] .rates__table thead th,
+  html[lang='el'] .rates__number {
+    text-transform: none;
+    letter-spacing: 0.04em;
+  }
+</style>

@@ -1,0 +1,12 @@
+---
+import ApartmentPage from '../../components/pages/ApartmentPage.astro';
+import { getContent } from '../../content';
+
+export function getStaticPaths() {
+  return getContent('en').units.map((unit) => ({ params: { slug: unit.slug } }));
+}
+
+const { slug } = Astro.params;
+---
+
+<ApartmentPage locale="en" slug={slug as string} />

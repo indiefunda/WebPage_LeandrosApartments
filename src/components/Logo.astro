@@ -1,0 +1,103 @@
+---
+/**
+ * The wordmark is set in the site's display serif — no raster logo, so it stays
+ * crisp on every screen. The Λ monogram is drawn geometrically and doubles as
+ * the favicon.
+ */
+export interface Props {
+  href: string;
+  label: string;
+  tone?: 'ink' | 'light';
+  compact?: boolean;
+}
+
+const { href, label, tone = 'ink', compact = false } = Astro.props;
+---
+
+<a class:list={['logo', `logo--${tone}`, compact && 'logo--compact']} href={href} aria-label={label}>
+  <svg class="logo__mark" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+    <circle cx="22" cy="22" r="21" fill="none" stroke="currentColor" stroke-width="1"></circle>
+    <path
+      d="M14.5 30.5 22 13.5l7.5 17"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.4"
+      stroke-linejoin="round"></path>
+    <path d="M18.1 26h7.8" fill="none" stroke="currentColor" stroke-width="1.1"></path>
+  </svg>
+  <span class="logo__text">
+    <span class="logo__name">Leandros</span>
+    <span class="logo__suffix">Apartments</span>
+  </span>
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.72rem;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+
+  .logo--light {
+    color: var(--color-paper);
+  }
+
+  .logo__mark {
+    width: 2.55rem;
+    height: 2.55rem;
+    flex: none;
+    transition: transform 0.7s var(--ease-out-expo);
+  }
+
+  .logo:hover .logo__mark {
+    transform: rotate(-4deg);
+  }
+
+  .logo__text {
+    display: grid;
+    gap: 0.12rem;
+    line-height: 1;
+  }
+
+  .logo__name {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    letter-spacing: 0.01em;
+    line-height: 0.95;
+  }
+
+  .logo__suffix {
+    font-family: var(--font-sans);
+    font-size: 0.5rem;
+    font-weight: 500;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    padding-left: 0.1em;
+  }
+
+  .logo--compact .logo__mark {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+
+  .logo--compact .logo__name {
+    font-size: 1.3rem;
+  }
+
+  @media (max-width: 420px) {
+    .logo__mark {
+      width: 2.15rem;
+      height: 2.15rem;
+    }
+    .logo__name {
+      font-size: 1.3rem;
+    }
+    .logo__suffix {
+      font-size: 0.44rem;
+      letter-spacing: 0.28em;
+    }
+  }
+</style>

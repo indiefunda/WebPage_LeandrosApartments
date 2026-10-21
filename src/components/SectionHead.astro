@@ -1,0 +1,72 @@
+---
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  tone?: 'ink' | 'light';
+  align?: 'left' | 'center';
+  class?: string;
+  id?: string;
+  as?: 'h2' | 'h3';
+}
+
+const {
+  eyebrow,
+  title,
+  intro,
+  tone = 'ink',
+  align = 'left',
+  class: className = '',
+  id,
+  as: Tag = 'h2',
+} = Astro.props;
+---
+
+<header class:list={['section-head', `section-head--${tone}`, `section-head--${align}`, className]}>
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <Tag class="section-head__title" id={id}>{title}</Tag>
+  {intro && <p class="section-head__intro">{intro}</p>}
+  <slot />
+</header>
+
+<style>
+  .section-head {
+    display: grid;
+    gap: 1.1rem;
+    max-width: 56rem;
+  }
+
+  .section-head--center {
+    justify-items: center;
+    text-align: center;
+    margin-inline: auto;
+  }
+
+  .section-head__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 4.4vw, 4rem);
+    line-height: 0.99;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .section-head__intro {
+    max-width: 44rem;
+    font-size: clamp(1.02rem, 1.15vw, 1.15rem);
+    line-height: 1.7;
+    color: var(--color-ink-soft);
+  }
+
+  .section-head--light .section-head__title {
+    color: var(--color-paper);
+  }
+
+  .section-head--light .section-head__intro {
+    color: rgb(247 242 233 / 0.78);
+  }
+
+  html[lang='el'] .section-head__title {
+    letter-spacing: 0;
+    line-height: 1.06;
+  }
+</style>

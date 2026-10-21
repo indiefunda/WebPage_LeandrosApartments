@@ -1,0 +1,7 @@
+dist/
+.astro/
+node_modules/
+.staging/
+.shots/
+.firebase/
+package-lock.json

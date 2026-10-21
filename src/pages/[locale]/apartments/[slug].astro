@@ -1,0 +1,16 @@
+---
+import ApartmentPage from '../../../components/pages/ApartmentPage.astro';
+import { getContent } from '../../../content';
+import type { Locale } from '../../../content/types';
+
+export function getStaticPaths() {
+  const locales: Locale[] = ['el', 'fr'];
+  return locales.flatMap((locale) =>
+    getContent('en').units.map((unit) => ({ params: { locale, slug: unit.slug } })),
+  );
+}
+
+const { locale, slug } = Astro.params;
+---
+
+<ApartmentPage locale={locale as Locale} slug={slug as string} />
