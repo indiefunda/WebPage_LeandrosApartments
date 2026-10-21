@@ -61,6 +61,7 @@ node scripts/prepare-images.mjs   # regrade + normalise .staging/images → src/
 node scripts/build-icons.mjs      # regenerate favicon + app icons
 node scripts/build-og.mjs         # regenerate social cards in public/og
 node scripts/qa.mjs               # browser QA: overflow, broken images, console errors, screenshots
+node scripts/a11y.mjs             # WCAG 2.2 A/AA audit with axe-core
 ```
 
 `qa.mjs` needs Microsoft Edge installed (it launches `channel: 'msedge'`, so no
@@ -72,6 +73,9 @@ node scripts/qa.mjs
 ```
 
 Screenshots land in `.shots/` (git-ignored).
+
+`npm run a11y` audits 15 pages in all three languages and exits non-zero on any
+WCAG 2.2 A/AA violation. Add `--perf` to sample LCP and CLS from the live site."
 
 ---
 
@@ -318,3 +322,24 @@ split at ≤ 480 CSS px, not a 100vw background, so nothing is upscaled.
 The code is © 2026 the site author. All photography, copy and the **Leandros
 Apartments** name are the property of Leandros Apartments, Platys Gialos,
 Sifnos. ΜΗ.Τ.Ε. registration **1026599**.
+---
+
+## Verified at launch
+
+Measured on the production deployment, October 2026:
+
+| Check                             | Result                                                               |
+| --------------------------------- | -------------------------------------------------------------------- |
+| Pages generated                   | 28 static pages (EN / EL / FR)                                       |
+| Type-check                        | `astro check` — 0 errors, 0 warnings                                 |
+| Accessibility                     | 0 WCAG 2.2 A/AA violations across 15 page checks (axe-core)          |
+| LCP (home, desktop, cold context) | ~0.68 s                                                              |
+| CLS (home)                        | 0.0008                                                               |
+| First-load transfer (home)        | ~242 KB over 10 requests                                             |
+| JavaScript                        | 4.4 KB inlined on the home page; no external JS bundle               |
+| Broken images / console errors    | none across the audited page set                                     |
+| Horizontal overflow               | none at 1440 px or 390 px                                            |
+| Enquiry pipeline                  | live form → Firestore `enquiries`, success state verified end-to-end |
+
+These are samples from this machine and Cloud CDN edge, not a lab benchmark;
+re-run `npm run a11y -- --perf` and `scripts/qa.mjs` after any change.

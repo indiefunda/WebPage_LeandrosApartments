@@ -6,15 +6,14 @@
  */
 export interface Props {
   href: string;
-  label: string;
   tone?: 'ink' | 'light';
   compact?: boolean;
 }
 
-const { href, label, tone = 'ink', compact = false } = Astro.props;
+const { href, tone = 'ink', compact = false } = Astro.props;
 ---
 
-<a class:list={['logo', `logo--${tone}`, compact && 'logo--compact']} href={href} aria-label={label}>
+<a class:list={['logo', `logo--${tone}`, compact && 'logo--compact']} href={href}>
   <svg class="logo__mark" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
     <circle cx="22" cy="22" r="21" fill="none" stroke="currentColor" stroke-width="1"></circle>
     <path

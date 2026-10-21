@@ -26,7 +26,7 @@ if (!unit) {
 const index = t.units.findIndex((item) => item.slug === slug);
 const covers: PhotoKey[] = ['m1-balcony', 'f2-veranda', 'b3-balcony'];
 const cover = photos[covers[index] ?? 'house-front'];
-const galleryKeys = unitGalleries[slug] ?? [];
+const galleryKeys = (unitGalleries[slug] ?? []).slice(1);
 const others = t.units.filter((item) => item.slug !== slug);
 const contactHref = localizePath(locale, 'contact/');
 const path = `apartments/${slug}/`;
@@ -143,7 +143,7 @@ const crumbs = breadcrumbs(
     <div class="shell">
       <div class="unit-gallery__head">
         <h2 class="display-md">{t.apartmentsPage.galleryTitle}</h2>
-        <p class="figure-caption">{t.common.photos} · {galleryKeys.length}</p>
+        <p class="figure-caption">{t.common.photos} · {galleryKeys.length + 1}</p>
       </div>
       <Gallery keys={galleryKeys} locale={locale} content={t} title={unit.name} />
     </div>

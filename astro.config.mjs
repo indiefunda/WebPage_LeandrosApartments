@@ -24,9 +24,9 @@ export default defineConfig({
       i18n: {
         defaultLocale: 'en',
         locales: {
-          en: 'en-GB',
-          el: 'el-GR',
-          fr: 'fr-FR',
+          en: 'en',
+          el: 'el',
+          fr: 'fr',
         },
       },
       // @astrojs/sitemap emits the three language alternates but not

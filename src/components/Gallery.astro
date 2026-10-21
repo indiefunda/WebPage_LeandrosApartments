@@ -158,24 +158,18 @@ const data = items.map(({ src, width, height, alt }) => ({ src, width, height, a
     transform: none;
   }
 
-  /* Mosaic: the first frame leads. */
+  /* Mosaic: a wide opening frame, then an even contact sheet. */
   @media (min-width: 760px) {
     .gallery--mosaic {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.65rem;
     }
 
     .gallery--mosaic .gallery__item--lead {
       grid-column: span 2;
-      grid-row: span 2;
     }
 
-    .gallery--mosaic .gallery__item--lead .gallery__img {
-      aspect-ratio: 1 / 1;
-      height: 100%;
-    }
-
-    .gallery--mosaic .gallery__item:not(.gallery__item--lead) .gallery__img {
+    .gallery--mosaic .gallery__img {
       aspect-ratio: 4 / 3;
     }
   }

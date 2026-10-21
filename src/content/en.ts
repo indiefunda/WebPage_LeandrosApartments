@@ -344,7 +344,7 @@ export const en: SiteContent = {
       { label: 'Nearest airport', value: 'Athens or Milos, then ferry' },
     ],
     mapTitle: 'Where you will be',
-    mapNote: 'The map loads from Google only when you choose to open it.',
+    mapNote: 'The map loads from OpenStreetMap only when you choose to open it.',
     mapCta: 'Open the map',
     cta: 'See rates & availability',
   },
@@ -451,7 +451,7 @@ export const en: SiteContent = {
       'On foot: follow the beach road; the house is on the sand.',
     ],
     mapTitle: 'Platys Gialos, Sifnos',
-    mapNote: 'The map loads from Google only when you choose to open it.',
+    mapNote: 'The map loads from OpenStreetMap only when you choose to open it.',
     mapCta: 'Open in Google Maps',
   },
 

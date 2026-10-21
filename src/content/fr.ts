@@ -350,7 +350,7 @@ export const fr: SiteContent = {
       { label: 'Aéroport le plus proche', value: 'Athènes ou Milos, puis ferry' },
     ],
     mapTitle: 'Là où vous serez',
-    mapNote: 'La carte ne se charge depuis Google que si vous choisissez de l’ouvrir.',
+    mapNote: 'La carte ne se charge depuis OpenStreetMap que si vous choisissez de l’ouvrir.',
     mapCta: 'Ouvrir la carte',
     cta: 'Voir les tarifs et les disponibilités',
   },
@@ -459,7 +459,7 @@ export const fr: SiteContent = {
       'À pied : suivez la route de la plage ; la maison est sur le sable.',
     ],
     mapTitle: 'Platys Gialos, Sifnos',
-    mapNote: 'La carte ne se charge depuis Google que si vous choisissez de l’ouvrir.',
+    mapNote: 'La carte ne se charge depuis OpenStreetMap que si vous choisissez de l’ouvrir.',
     mapCta: 'Ouvrir dans Google Maps',
   },
 

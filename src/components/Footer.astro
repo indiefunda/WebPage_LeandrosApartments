@@ -26,7 +26,7 @@ const navLinks = [
   <div class="shell">
     <div class="footer__top">
       <div class="footer__brand">
-        <Logo href={localeHome(locale)} label={t.brand.name} />
+        <Logo href={localeHome(locale)} />
         <p class="footer__tagline">{t.footer.tagline}</p>
         <p class="footer__mte">
           <span>{t.footer.mteLabel}</span>
@@ -189,10 +189,6 @@ const navLinks = [
     font-size: 0.72rem;
     letter-spacing: 0.02em;
     color: var(--color-ink-muted);
-  }
-
-  .footer__note {
-    opacity: 0.8;
   }
 
   .footer__top-link {

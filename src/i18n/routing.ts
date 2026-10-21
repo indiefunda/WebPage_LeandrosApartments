@@ -6,11 +6,11 @@ export const defaultLocale: Locale = 'en';
 
 export const localeMeta: Record<
   Locale,
-  { label: string; short: string; htmlLang: string; ogLocale: string }
+  { label: string; short: string; htmlLang: string; hreflang: string; ogLocale: string }
 > = {
-  en: { label: 'English', short: 'EN', htmlLang: 'en-GB', ogLocale: 'en_GB' },
-  el: { label: 'Ελληνικά', short: 'ΕΛ', htmlLang: 'el-GR', ogLocale: 'el_GR' },
-  fr: { label: 'Français', short: 'FR', htmlLang: 'fr-FR', ogLocale: 'fr_FR' },
+  en: { label: 'English', short: 'EN', htmlLang: 'en-GB', hreflang: 'en', ogLocale: 'en_GB' },
+  el: { label: 'Ελληνικά', short: 'ΕΛ', htmlLang: 'el-GR', hreflang: 'el', ogLocale: 'el_GR' },
+  fr: { label: 'Français', short: 'FR', htmlLang: 'fr-FR', hreflang: 'fr', ogLocale: 'fr_FR' },
 };
 
 /** `/` for English, `/el/` and `/fr/` for the others. */
@@ -45,7 +45,7 @@ export interface AlternateLink {
  */
 export function alternateLinks(path: string): AlternateLink[] {
   const links: AlternateLink[] = locales.map((locale) => ({
-    hrefLang: localeMeta[locale].htmlLang,
+    hrefLang: localeMeta[locale].hreflang,
     href: absoluteUrl(localizePath(locale, path)),
   }));
   links.push({ hrefLang: 'x-default', href: absoluteUrl(localizePath(defaultLocale, path)) });

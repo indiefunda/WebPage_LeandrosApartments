@@ -21,7 +21,7 @@ const { locale, path, variant = 'compact', label, tone = 'ink' } = Astro.props;
           <a
             class:list={['lang__link', item === locale && 'is-current']}
             href={localizePath(item, path)}
-            hreflang={localeMeta[item].htmlLang}
+            hreflang={localeMeta[item].hreflang}
             lang={localeMeta[item].htmlLang}
             aria-current={item === locale ? 'true' : undefined}
           >

@@ -64,6 +64,13 @@ const settle = async () => {
   await page.addStyleTag({
     content: '[data-reveal]{opacity:1!important;transform:none!important}',
   });
+  await page.evaluate(async () => {
+    const imgs = Array.from(document.images);
+    imgs.forEach((img) => {
+      img.loading = 'eager';
+    });
+    await Promise.all(imgs.map((img) => img.decode?.().catch(() => {})));
+  });
   await page.evaluate(
     () =>
       new Promise((resolve) => {

@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Logo from '../Logo.astro';
 import Icon from '../Icon.astro';
 import { getContent } from '../../content';
 import type { Locale } from '../../content/types';
@@ -19,7 +18,6 @@ const t = getContent(locale);
 <BaseLayout locale={locale} path="404/" meta={t.meta.notFound} noindex>
   <section class="notfound">
     <div class="shell notfound__inner">
-      <Logo href={localeHome(locale)} label={t.brand.name} />
       <p class="notfound__code" aria-hidden="true">404</p>
       <h1 class="notfound__title">{t.notFound.title}</h1>
       <p class="notfound__body">{t.notFound.body}</p>
@@ -71,7 +69,7 @@ const t = getContent(locale);
     line-height: 0.8;
     color: var(--color-clay);
     opacity: 0.85;
-    margin-top: 1.5rem;
+    margin-top: 0.5rem;
   }
 
   .notfound__title {

@@ -257,7 +257,7 @@
   }
 
   .eyebrow--light {
-    color: rgb(247 242 233 / 0.72);
+    color: rgb(247 242 233 / 0.9);
   }
 
   .font-display {
@@ -797,4 +797,19 @@ html[lang^='el'] .notfound__title {
 html[lang^='el'] .hero__line--italic {
   letter-spacing: 0;
   line-height: 1.06;
+}
+
+/* <picture> is inline by default, so an inner img with height:100% resolves
+   against nothing and sits at its intrinsic height. Make the wrapper fill its
+   frame so cover crops actually cover. */
+picture {
+  display: block;
+}
+
+.media > picture,
+.media-frame > picture,
+[class*='__media'] > picture,
+.hero__frame > picture {
+  width: 100%;
+  height: 100%;
 }

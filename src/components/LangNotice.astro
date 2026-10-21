@@ -49,7 +49,7 @@ const suggestions: Record<string, { target: Locale; text: string; link: string }
       const prefix = match.target === 'en' ? '' : `/${match.target}`;
       const clean = path.replace(/^\/+|\/+$/g, '');
       linkEl.href = clean ? `${prefix}/${clean}/` : `${prefix}/`;
-      linkEl.setAttribute('hreflang', meta[match.target].htmlLang);
+      linkEl.setAttribute('hreflang', meta[match.target].hreflang);
       linkEl.setAttribute('lang', meta[match.target].htmlLang);
       linkEl.textContent = match.link;
       textEl.textContent = match.text;

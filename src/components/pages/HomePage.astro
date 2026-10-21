@@ -687,7 +687,7 @@ const ratesHref = localizePath(locale, 'rates/');
   .band {
     position: relative;
     display: grid;
-    place-items: center;
+    place-items: end stretch;
     min-height: clamp(21rem, 46vw, 33rem);
     overflow: hidden;
     isolation: isolate;
@@ -707,15 +707,15 @@ const ratesHref = localizePath(locale, 'rates/');
     inset: 0;
     z-index: -1;
     background:
-      linear-gradient(to bottom, rgb(10 42 47 / 0.18), rgb(10 42 47 / 0.46)),
-      radial-gradient(circle at 30% 40%, transparent, rgb(10 42 47 / 0.22));
+      linear-gradient(to top, rgb(10 42 47 / 0.82) 0%, rgb(10 42 47 / 0.38) 42%, rgb(10 42 47 / 0.12) 100%),
+      radial-gradient(circle at 25% 30%, transparent, rgb(10 42 47 / 0.2));
   }
 
   .band__content {
     display: grid;
-    gap: 1.2rem;
-    justify-items: center;
-    text-align: center;
+    gap: 1.1rem;
+    justify-items: start;
+    text-align: left;
     padding-block: clamp(3rem, 7vw, 6rem);
     color: var(--color-paper);
   }
@@ -727,7 +727,7 @@ const ratesHref = localizePath(locale, 'rates/');
     font-size: clamp(2rem, 4.6vw, 4rem);
     line-height: 1.08;
     letter-spacing: -0.02em;
-    max-width: 18ch;
+    max-width: 15ch;
     text-wrap: balance;
   }
 
