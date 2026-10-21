@@ -60,6 +60,7 @@ Node **24** is required — CI runs on 24, and the Astro 7 toolchain does not pa
 node scripts/prepare-images.mjs   # regrade + normalise .staging/images → src/assets/photos
 node scripts/build-icons.mjs      # regenerate favicon + app icons
 node scripts/build-og.mjs         # regenerate social cards in public/og
+node scripts/build-map-preview.mjs # rebuild the static map preview from OpenStreetMap tiles
 node scripts/qa.mjs               # browser QA: overflow, broken images, console errors, screenshots
 node scripts/a11y.mjs             # WCAG 2.2 A/AA audit with axe-core
 ```
@@ -347,6 +348,28 @@ Measured on the production deployment, October 2026:
 
 These are samples from this machine and Cloud CDN edge, not a lab benchmark;
 re-run `npm run a11y -- --perf` and `scripts/qa.mjs` after any change.
+
+---
+
+## The map
+
+The location and contact pages show the property's **own Google Maps listing**
+(place ID `0x1498f262c6d36733:0x8f980a6f21df8778`, rating 4.6 from 22 reviews at
+the time of writing). The embed is loaded only when the visitor presses “Open
+the map”, so no third-party request happens on page load.
+
+- The preview is a static image generated from OpenStreetMap tiles and committed
+  to `public/map/platys-gialos.jpg`, with the required attribution shown on the
+  card.
+- Coordinates (`36.93063, 24.72456`) live in `src/data/property.ts` together
+  with the Google embed parameter, the listing URL (`cid=…`) and the directions
+  URL.
+- If the listing moves or the preview needs refreshing, update `property.ts`,
+  run `npm run map`, and redeploy.
+
+The JSON-LD includes `hasMap` and `sameAs` pointing at the Google listing, and
+the coordinates are used by `LodgingBusiness.geo`.
+
 ---
 
 ## Security

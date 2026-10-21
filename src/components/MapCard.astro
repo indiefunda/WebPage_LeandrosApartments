@@ -10,49 +10,72 @@ export interface Props {
   cta: string;
 }
 
-const { title, note, cta } = Astro.props;
+const { content: t, title, note, cta } = Astro.props;
 
-const bbox = [
-  property.geo.lng - 0.012,
-  property.geo.lat - 0.008,
-  property.geo.lng + 0.012,
-  property.geo.lat + 0.008,
-].join('%2C');
+// The embed is the property's own Google Maps listing (place ID in the pb
+// parameter), so the pin always lands on the apartments, not a beach centroid.
+const langRegion: Record<string, [string, string]> = {
+  en: ['en', 'gb'],
+  el: ['el', 'gr'],
+  fr: ['fr', 'fr'],
+};
+const [lang, region] = langRegion[t.locale] ?? ['en', 'gb'];
+const embedUrl = `https://www.google.com/maps/embed?pb=${property.mapEmbedPb.replaceAll(
+  '!1sen!2sgb',
+  `!1s${lang}!2s${region}`,
+)}`;
 
-const osmSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${property.geo.lat}%2C${property.geo.lng}`;
+const coords = `${property.geo.lat.toFixed(5)}° N · ${property.geo.lng.toFixed(5)}° E`;
 ---
 
-<div class="map" data-map data-src={osmSrc}>
-  <div class="map__art" data-map-art>
-    <svg class="map__compass" viewBox="0 0 120 120" aria-hidden="true">
-      <circle cx="60" cy="60" r="46" fill="none" stroke="currentColor" stroke-width="0.6"></circle>
-      <circle
-        cx="60"
-        cy="60"
-        r="34"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="0.4"
-        stroke-dasharray="1 4"></circle>
-      <path d="M60 12v96M12 60h96" stroke="currentColor" stroke-width="0.4" opacity="0.5"></path>
-      <path d="M60 28 66 60l-6 32-6-32Z" fill="currentColor" opacity="0.85"></path>
-      <text x="60" y="8" text-anchor="middle" font-size="6" letter-spacing="2" fill="currentColor">N</text>
-    </svg>
-    <p class="map__coords">{property.geo.lat.toFixed(4)}° N · {property.geo.lng.toFixed(4)}° E</p>
-    <p class="map__place">{title}</p>
+<div class="map" data-map data-src={embedUrl} data-title={`${property.name} — Google Maps`}>
+  <div class="map__preview" data-map-preview>
+    <img
+      src={property.mapPreview}
+      alt={t.common.mapAlt}
+      width="1200"
+      height="800"
+      loading="lazy"
+      decoding="async"
+    />
+
+    <span class="map__pin" aria-hidden="true">
+      <span class="map__pin-label">{property.name}</span>
+      <span class="map__pin-dot"></span>
+    </span>
+
+    <a class="map__credit" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">
+      © OpenStreetMap
+    </a>
+
+    <div class="map__actions">
+      <a class="btn btn--light btn--sm" href={property.geoUrl} target="_blank" rel="noopener" data-map-load>
+        <Icon name="pin" class="icon-sm" />
+        {cta}
+      </a>
+      <a class="btn btn--outline-light btn--sm" href={property.directionsUrl} target="_blank" rel="noopener">
+        <Icon name="arrow-up-right" class="icon-sm" />
+        {t.common.directions}
+      </a>
+    </div>
   </div>
 
   <div class="map__body">
+    <p class="map__title">{title}</p>
     <p class="map__note">{note}</p>
-    <div class="map__actions">
-      <button class="btn btn--ghost btn--sm" type="button" data-map-load>
-        <Icon name="pin" class="map__icon" />
-        {cta}
-      </button>
-      <a class="map__link" href={property.geoUrl} target="_blank" rel="noopener">
-        Google Maps
-        <Icon name="arrow-up-right" class="map__icon" />
-      </a>
+    <div class="map__meta">
+      <span class="map__coords">{coords}</span>
+      <span class="map__links">
+        <a class="map__reviews" href={property.geoUrl} target="_blank" rel="noopener">
+          <span class="map__star" aria-hidden="true">★</span>
+          {t.common.reviewsOnGoogle}
+          <Icon name="arrow-up-right" class="icon-xs" />
+        </a>
+        <a class="map__reviews" href={property.directionsUrl} target="_blank" rel="noopener">
+          {t.common.directions}
+          <Icon name="arrow-up-right" class="icon-xs" />
+        </a>
+      </span>
     </div>
   </div>
 </div>
@@ -62,141 +85,239 @@ const osmSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&lay
     display: grid;
     border: 1px solid var(--color-line);
     background: var(--color-paper-deep);
-    min-height: 15rem;
-  }
-
-  .map__art {
-    position: relative;
-    display: grid;
-    justify-items: center;
-    align-content: center;
-    gap: 0.6rem;
-    padding: 2.5rem 1.5rem;
-    color: var(--color-sea);
     overflow: hidden;
   }
 
-  .map__art::before {
+  .map__preview {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    max-height: 34rem;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .map__preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 1.4s var(--ease-out-expo);
+  }
+
+  .map__preview:hover img {
+    transform: scale(1.025);
+  }
+
+  .map__preview::after {
     content: '';
     position: absolute;
     inset: 0;
-    background-image:
-      linear-gradient(to right, rgb(22 33 31 / 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(22 33 31 / 0.05) 1px, transparent 1px);
-    background-size: 2.2rem 2.2rem;
-    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to top, rgb(10 42 47 / 0.62) 0%, rgb(10 42 47 / 0.18) 34%, transparent 62%);
   }
 
-  .map__compass {
-    width: 7rem;
-    height: 7rem;
-    position: relative;
-    color: var(--color-sea);
-    opacity: 0.9;
+  /* Pin ------------------------------------------------------------------ */
+  .map__pin {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    transform: translate(-50%, -100%);
+    pointer-events: none;
   }
 
-  .map__coords {
-    position: relative;
-    font-size: 0.66rem;
-    letter-spacing: 0.16em;
-    color: var(--color-ink-muted);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .map__place {
-    position: relative;
-    font-family: var(--font-display);
-    font-size: 1.35rem;
+  .map__pin-label {
+    padding: 0.35rem 0.65rem;
+    background: var(--color-paper);
+    border: 1px solid rgb(22 33 31 / 0.15);
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     color: var(--color-ink);
+    white-space: nowrap;
+    box-shadow: 0 12px 30px -18px rgb(10 42 47 / 0.55);
   }
 
+  .map__pin-dot {
+    width: 0.95rem;
+    height: 0.95rem;
+    border-radius: 999px;
+    background: var(--color-clay);
+    border: 2px solid var(--color-paper);
+    box-shadow:
+      0 0 0 5px rgb(157 75 50 / 0.25),
+      0 8px 18px -6px rgb(10 42 47 / 0.55);
+  }
+
+  /* Credit & controls ---------------------------------------------------- */
+  .map__credit {
+    position: absolute;
+    right: 0.55rem;
+    bottom: 0.5rem;
+    z-index: 3;
+    font-size: 0.55rem;
+    letter-spacing: 0.04em;
+    color: rgb(247 242 233 / 0.65);
+    text-decoration: none;
+  }
+
+  .map__credit:hover {
+    color: var(--color-paper);
+    text-decoration: underline;
+  }
+
+  .map__actions {
+    position: absolute;
+    left: clamp(0.75rem, 2vw, 1.25rem);
+    bottom: clamp(0.75rem, 2vw, 1.25rem);
+    z-index: 3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .map__actions .btn {
+    padding-block: 0.75rem;
+    font-size: 0.62rem;
+  }
+
+  /* Body ------------------------------------------------------------------ */
   .map__body {
     display: grid;
-    gap: 1.1rem;
-    align-content: center;
-    padding: clamp(1.25rem, 2.5vw, 1.9rem);
+    gap: 0.55rem;
+    padding: clamp(1rem, 2.2vw, 1.5rem) clamp(1rem, 2.2vw, 1.6rem);
     border-top: 1px solid var(--color-line);
     background: color-mix(in oklab, var(--color-cream) 55%, transparent);
   }
 
+  .map__title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    line-height: 1.1;
+  }
+
   .map__note {
-    font-size: 0.82rem;
+    max-width: 60ch;
+    font-size: 0.8rem;
     line-height: 1.6;
     color: var(--color-ink-soft);
-    max-width: 34ch;
   }
 
-  .map__actions {
+  .map__meta {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 1rem;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--color-line-soft);
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--color-ink-muted);
   }
 
-  :global(.map__icon) {
-    width: 0.9rem;
-    height: 0.9rem;
+  .map__coords {
+    font-variant-numeric: tabular-nums;
   }
 
-  .map__link {
+  .map__links {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.1rem;
+  }
+
+  .map__reviews {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    color: var(--color-ink);
     text-decoration: none;
     border-bottom: 1px solid var(--color-line);
-    padding-bottom: 0.35rem;
+    padding-bottom: 0.15rem;
   }
 
-  .map__link:hover {
+  .map__reviews:hover {
     border-color: currentColor;
+    color: var(--color-clay);
   }
 
-  .map iframe {
+  .map__star {
+    color: var(--color-brass);
+  }
+
+  .map.is-loaded .map__note {
+    display: none;
+  }
+
+  .map :global(iframe) {
     display: block;
-    width: 100%;
-    height: 100%;
-    min-height: 22rem;
-    border: 0;
     grid-column: 1 / -1;
+    justify-self: stretch;
+    width: 100%;
+    height: clamp(22rem, 46vw, 30rem);
+    border: 0;
   }
 
-  @media (min-width: 760px) {
-    .map {
-      grid-template-columns: 1.1fr 1fr;
+  @media (max-width: 560px) {
+    .map__preview {
+      aspect-ratio: 4 / 3;
     }
 
-    .map__body {
-      border-top: 0;
-      border-left: 1px solid var(--color-line);
+    .map__pin-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.08em;
+    }
+
+    .map__actions {
+      right: 0.75rem;
+    }
+
+    .map__actions .btn {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+
+    .map__credit {
+      bottom: auto;
+      top: 0.5rem;
+      color: rgb(22 33 31 / 0.55);
     }
   }
 
-  html[lang='el'] .map__link {
+  html[lang^='el'] .map__pin-label {
     text-transform: none;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
   }
 </style>
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-map]').forEach((root) => {
-    const button = root.querySelector<HTMLButtonElement>('[data-map-load]');
-    const src = root.dataset.src;
-    if (!button || !src) return;
+    const link = root.querySelector<HTMLAnchorElement>('[data-map-load]');
+    const source = root.dataset.src;
+    if (!link || !source) return;
 
-    button.addEventListener('click', () => {
+    link.addEventListener('click', (event) => {
+      // Without JS the link opens the listing in Google Maps; with JS we embed
+      // it in place, so the visitor never leaves the page.
+      event.preventDefault();
+
       const frame = document.createElement('iframe');
-      frame.src = src;
-      frame.title = 'OpenStreetMap — Leandros Apartments, Platys Gialos, Sifnos';
+      frame.src = source;
+      frame.title = root.dataset.title ?? 'Google Maps';
       frame.loading = 'lazy';
-      frame.referrerPolicy = 'no-referrer';
-      const art = root.querySelector<HTMLElement>('[data-map-art]');
-      const body = root.querySelector<HTMLElement>('.map__body');
-      art?.remove();
-      body?.remove();
-      root.append(frame);
+      frame.allowFullscreen = true;
+      frame.referrerPolicy = 'no-referrer-when-downgrade';
+
+      const preview = root.querySelector<HTMLElement>('[data-map-preview]');
+      preview?.replaceWith(frame);
+      root.classList.add('is-loaded');
+      frame.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
   });
 </script>

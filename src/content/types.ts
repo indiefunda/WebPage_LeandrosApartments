@@ -128,6 +128,9 @@ export interface SiteContent {
     otherApartments: string;
     photo: string;
     photos: string;
+    directions: string;
+    reviewsOnGoogle: string;
+    mapAlt: string;
   };
 
   home: {

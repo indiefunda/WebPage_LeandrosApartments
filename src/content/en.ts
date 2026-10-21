@@ -100,6 +100,9 @@ export const en: SiteContent = {
     otherApartments: 'The other apartments',
     photo: 'Photo',
     photos: 'Photos',
+    directions: 'Directions',
+    reviewsOnGoogle: 'Reviews on Google',
+    mapAlt: 'Map of Platys Gialos showing where Leandros Apartments is',
   },
 
   home: {
@@ -344,7 +347,7 @@ export const en: SiteContent = {
       { label: 'Nearest airport', value: 'Athens or Milos, then ferry' },
     ],
     mapTitle: 'Where you will be',
-    mapNote: 'The map loads from OpenStreetMap only when you choose to open it.',
+    mapNote: 'The map loads from Google only when you choose to open it.',
     mapCta: 'Open the map',
     cta: 'See rates & availability',
   },
@@ -451,8 +454,8 @@ export const en: SiteContent = {
       'On foot: follow the beach road; the house is on the sand.',
     ],
     mapTitle: 'Platys Gialos, Sifnos',
-    mapNote: 'The map loads from OpenStreetMap only when you choose to open it.',
-    mapCta: 'Open in Google Maps',
+    mapNote: 'The map loads from Google only when you choose to open it.',
+    mapCta: 'Open the map',
   },
 
   form: {

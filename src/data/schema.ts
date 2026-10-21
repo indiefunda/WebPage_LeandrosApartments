@@ -25,6 +25,8 @@ export function lodgingBusiness(t: SiteContent, locale: Locale) {
     logo: `${siteUrl}/logo.svg`,
     telephone: property.phones.landline,
     priceRange: property.priceRange,
+    hasMap: property.geoUrl,
+    sameAs: [property.geoUrl],
     currenciesAccepted: 'EUR',
     checkinTime: property.checkIn,
     checkoutTime: property.checkOut,

@@ -14,7 +14,7 @@ const { reviews, content: t, title } = Astro.props;
 <div class="reviews" data-reviews>
   <div class="reviews__rail no-scrollbar" data-reviews-rail aria-label={title} tabindex="0">
     {
-      reviews.map((review, index) => (
+      reviews.map((review) => (
         <article class="review">
           <span class="review__mark" aria-hidden="true">
             “
