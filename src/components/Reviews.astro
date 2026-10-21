@@ -1,6 +1,4 @@
 ---
-import Icon from './Icon.astro';
-import { property } from '../data/property';
 import type { Review, SiteContent } from '../content/types';
 
 export interface Props {
@@ -8,7 +6,7 @@ export interface Props {
   content: SiteContent;
 }
 
-const { reviews, content: t } = Astro.props;
+const { reviews } = Astro.props;
 
 // A curated six: family stay, cleanliness, two short international quotes and
 // the French regular. No horizontal scrolling, no controls, nothing hidden.
@@ -33,14 +31,6 @@ const featured = [0, 1, 2, 3, 5, 6]
         </figure>
       ))
     }
-  </div>
-
-  <div class="reviews__more">
-    <a class="link-arrow" href={property.geoUrl} target="_blank" rel="noopener">
-      <span class="reviews__star" aria-hidden="true">★</span>
-      {t.common.reviewsOnGoogle}
-      <Icon name="arrow-up-right" class="icon-xs" />
-    </a>
   </div>
 </div>
 
@@ -93,18 +83,6 @@ const featured = [0, 1, 2, 3, 5, 6]
   .review__origin {
     font-size: 0.76rem;
     color: var(--color-ink-muted);
-  }
-
-  .reviews__more {
-    display: flex;
-    margin-top: 0.75rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--color-line);
-  }
-
-  .reviews__star {
-    color: var(--color-brass);
-    font-size: 0.9rem;
   }
 
   @media (max-width: 640px) {

@@ -309,8 +309,17 @@ const ratesHref = localizePath(locale, 'rates/');
   <!-- Reviews ------------------------------------------------------------- -->
   <section class="section reviews-section">
     <div class="shell">
-      <SectionHead eyebrow={t.home.reviews.eyebrow} title={t.home.reviews.title} />
-      <p class="reviews__note">{t.home.reviews.note}</p>
+      <div class="reviews__head">
+        <div class="reviews__head-copy">
+          <SectionHead eyebrow={t.home.reviews.eyebrow} title={t.home.reviews.title} />
+          <p class="reviews__note">{t.home.reviews.note}</p>
+        </div>
+        <a class="link-arrow reviews__google" href={property.geoUrl} target="_blank" rel="noopener">
+          <span class="reviews__star" aria-hidden="true">★</span>
+          {t.common.reviewsOnGoogle}
+          <Icon name="arrow-up-right" class="icon-xs" />
+        </a>
+      </div>
       <Reviews reviews={t.reviews} content={t} />
     </div>
   </section>
@@ -833,14 +842,37 @@ const ratesHref = localizePath(locale, 'rates/');
   }
 
   .reviews-section :global(.section-head) {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0;
+  }
+
+  .reviews__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.25rem 2rem;
+    margin-bottom: clamp(1.75rem, 3vw, 2.75rem);
+  }
+
+  .reviews__head-copy {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 40rem;
   }
 
   .reviews__note {
-    margin-bottom: clamp(1.75rem, 3vw, 2.75rem);
     font-size: 0.72rem;
     letter-spacing: 0.04em;
     color: var(--color-ink-muted);
+  }
+
+  .reviews__google {
+    flex: none;
+  }
+
+  .reviews__star {
+    color: var(--color-brass);
+    font-size: 0.9rem;
   }
 
   /* Offers ---------------------------------------------------------------- */
