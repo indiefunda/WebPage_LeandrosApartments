@@ -160,7 +160,7 @@ const data = items.map(({ src, width, height, alt }) => ({ src, width, height, a
 
   /* Mosaic: a wide opening frame, then an even contact sheet. */
   @media (min-width: 760px) {
-    .gallery--mosaic {
+    .gallery--mosaic .gallery__grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.65rem;
     }

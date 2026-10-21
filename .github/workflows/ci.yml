@@ -24,14 +24,32 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
       - name: Astro + TypeScript diagnostics
-        run: npm run check
+        id: check
+        continue-on-error: true
+        run: npx astro check 2>&1 | tee check.log
+
+      # The runner's raw logs need authentication to read, so surface the tail
+      # of the diagnostics as a public check annotation.
+      - name: Report diagnostics
+        if: always()
+        run: |
+          if [ -s check.log ]; then
+            message=$(tail -n 25 check.log | tr '\n' ' ' | tr -d '"' | cut -c1-900)
+            echo "::notice title=astro check output::$message"
+          fi
+
+      - name: Enforce diagnostics
+        if: steps.check.outcome == 'failure'
+        run: |
+          cat check.log
+          exit 1
 
       - name: Prettier
         run: npm run format:check
