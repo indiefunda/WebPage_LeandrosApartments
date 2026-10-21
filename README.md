@@ -52,7 +52,7 @@ npm run preview      # serve dist/ locally
 npm run check        # Astro + TypeScript diagnostics
 ```
 
-Node **22+** is required (Astro 7).
+Node **24** is required — CI runs on 24, and the Astro 7 toolchain does not pass its own type-check on Node 22.
 
 ### Useful maintenance scripts
 

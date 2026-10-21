@@ -770,6 +770,7 @@ html[lang^='el'] .rates__number,
 html[lang^='el'] .contact-card__subtitle,
 html[lang^='el'] .avail__field label,
 html[lang^='el'] .lang__link,
+html[lang^='el'] .badge-round,
 html[lang^='el'] .notfound__attempted {
   text-transform: none;
   letter-spacing: 0.05em;

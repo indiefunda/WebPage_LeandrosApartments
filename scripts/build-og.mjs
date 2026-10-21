@@ -34,12 +34,18 @@ const overlay = Buffer.from(`
 <svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}">
   <defs>
     <linearGradient id="scrim" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0a2a2f" stop-opacity="0.15"/>
-      <stop offset="0.55" stop-color="#0a2a2f" stop-opacity="0.05"/>
-      <stop offset="1" stop-color="#0a2a2f" stop-opacity="0.72"/>
+      <stop offset="0" stop-color="#0a2a2f" stop-opacity="0.2"/>
+      <stop offset="0.5" stop-color="#0a2a2f" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#0a2a2f" stop-opacity="0.55"/>
+    </linearGradient>
+    <linearGradient id="band" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a2a2f" stop-opacity="0"/>
+      <stop offset="0.45" stop-color="#0a2a2f" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#0a2a2f" stop-opacity="0.92"/>
     </linearGradient>
   </defs>
   <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#scrim)"/>
+  <rect y="${HEIGHT - 230}" width="${WIDTH}" height="230" fill="url(#band)"/>
   <g transform="translate(72 ${HEIGHT - 128})" fill="none" stroke="#f7f2e9" stroke-width="2">
     <circle cx="40" cy="40" r="38" opacity="0.9"/>
     <path d="M25 60 L40 22 L55 60" stroke-linejoin="round"/>
