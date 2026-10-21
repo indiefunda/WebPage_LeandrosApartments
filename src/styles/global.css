@@ -462,6 +462,7 @@
     transition-delay: calc(var(--reveal-delay, 0) * 90ms);
   }
 
+  .js [data-reveal='in'],
   [data-reveal='in'] {
     opacity: 1;
     transform: none;

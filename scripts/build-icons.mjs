@@ -34,7 +34,6 @@ const mark = (size, padding = 0.16, background = SEA, stroke = PAPER) => {
   <rect width="${s}" height="${s}" fill="${background}"/>
   <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${stroke}" stroke-width="${0.8 * scale}" opacity="0.5"/>
   <path d="M${left} ${base} L${cx} ${apex} L${right} ${base}" fill="none" stroke="${stroke}" stroke-width="${2.2 * scale}" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M${cx - 4.6 * scale} ${base - 7 * scale} h${9.2 * scale}" stroke="${stroke}" stroke-width="${1.4 * scale}" stroke-linecap="round"/>
 </svg>`);
 };
 
@@ -43,7 +42,6 @@ const faviconSvg = `<?xml version="1.0" encoding="UTF-8"?>
   <rect width="64" height="64" fill="${SEA}"/>
   <circle cx="32" cy="32" r="23" fill="none" stroke="${PAPER}" stroke-width="1.1" opacity="0.55"/>
   <path d="M20 43 L32 19 L44 43" fill="none" stroke="${PAPER}" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M26.5 37.5 h11" stroke="${PAPER}" stroke-width="1.5" stroke-linecap="round"/>
 </svg>
 `;
 
@@ -52,7 +50,6 @@ const logoSvg = `<?xml version="1.0" encoding="UTF-8"?>
   <rect width="64" height="64" fill="${SEA}"/>
   <circle cx="32" cy="32" r="23" fill="none" stroke="${PAPER}" stroke-width="1.1" opacity="0.55"/>
   <path d="M20 43 L32 19 L44 43" fill="none" stroke="${PAPER}" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M26.5 37.5 h11" stroke="${PAPER}" stroke-width="1.5" stroke-linecap="round"/>
 </svg>
 `;
 

@@ -302,6 +302,10 @@ The art direction is **“barefoot Cycladic”, not fake luxury**. The property 
 three simple, immaculate apartments on a Blue Flag beach; the site sells the
 sand, the courtyard and the light, not marble bathrooms.
 
+- **Logo:** a modernisation of the property's original blue wave logo. The
+  swoosh becomes a fine wave line under the wordmark, the name is set in EB
+  Garamond, and the monogram is the Greek lambda of Λέανδρος (no crossbar, so it
+  never reads as a Latin "A").
 - **Palette:** limewash paper `#F7F2E9`, deep aegean ink `#123F45`, Sifnian clay
   `#9D4B32`, olive `#59684A`. No gradients except photographic scrims.
 - **Type:** EB Garamond at display sizes with a high contrast ratio, Inter for

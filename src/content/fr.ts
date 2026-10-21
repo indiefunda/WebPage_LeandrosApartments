@@ -56,14 +56,14 @@ export const fr: SiteContent = {
 
   nav: {
     home: 'Accueil',
-    apartments: 'Les appartements',
+    apartments: 'Appartements',
     location: 'Situation',
-    rates: 'Tarifs et réservation',
+    rates: 'Tarifs',
     contact: 'Contact',
   },
 
   actions: {
-    book: 'Vérifier les disponibilités',
+    book: 'Vérifier les dates',
     viewApartments: 'Voir les appartements',
     viewAll: 'Les trois appartements',
     details: 'Voir l’appartement',

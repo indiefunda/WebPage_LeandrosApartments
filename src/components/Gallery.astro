@@ -158,19 +158,21 @@ const data = items.map(({ src, width, height, alt }) => ({ src, width, height, a
     transform: none;
   }
 
-  /* Mosaic: a wide opening frame, then an even contact sheet. */
+  /* Mosaic: an even contact sheet, no stretched crops. */
   @media (min-width: 760px) {
     .gallery--mosaic .gallery__grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.65rem;
     }
 
-    .gallery--mosaic .gallery__item--lead {
-      grid-column: span 2;
-    }
-
     .gallery--mosaic .gallery__img {
       aspect-ratio: 4 / 3;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .gallery--mosaic .gallery__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 

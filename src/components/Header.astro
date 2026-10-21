@@ -303,7 +303,7 @@ const bookHref = localizePath(locale, 'contact/');
     color: var(--color-clay);
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 1024px) {
     .header__nav {
       display: block;
     }
@@ -318,6 +318,29 @@ const bookHref = localizePath(locale, 'contact/');
 
     .menu {
       display: none;
+    }
+  }
+
+  /* Tablet landscape: keep the full navigation but tighten it, so longer
+     French and Greek labels stay on one line. */
+  @media (min-width: 1024px) and (max-width: 1179px) {
+    .header__inner {
+      gap: 0.9rem;
+    }
+
+    .header__nav-list {
+      gap: 0.85rem;
+    }
+
+    .header__link {
+      font-size: 0.61rem;
+      letter-spacing: 0.055em;
+    }
+
+    .header__cta {
+      padding-inline: 0.85rem;
+      font-size: 0.61rem;
+      letter-spacing: 0.07em;
     }
   }
 

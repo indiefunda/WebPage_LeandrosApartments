@@ -49,11 +49,11 @@ const overlay = Buffer.from(`
   <g transform="translate(72 ${HEIGHT - 128})" fill="none" stroke="#f7f2e9" stroke-width="2">
     <circle cx="40" cy="40" r="38" opacity="0.9"/>
     <path d="M25 60 L40 22 L55 60" stroke-linejoin="round"/>
-    <path d="M31 50 h18" stroke-width="1.6"/>
   </g>
-  <g transform="translate(168 ${HEIGHT - 92})" fill="#f7f2e9" font-family="Georgia, 'Times New Roman', serif">
+  <g transform="translate(168 ${HEIGHT - 96})" fill="#f7f2e9" font-family="Georgia, 'Times New Roman', serif">
     <text x="0" y="0" font-size="46" letter-spacing="1">Leandros</text>
-    <text x="2" y="30" font-size="15" letter-spacing="7" opacity="0.8">APARTMENTS</text>
+    <path d="M2 14 C 36 6, 70 6, 104 14 S 170 22, 204 14 S 262 7, 300 14" fill="none" stroke="#f7f2e9" stroke-width="1.2" opacity="0.55" stroke-linecap="round"/>
+    <text x="2" y="44" font-size="15" letter-spacing="7" opacity="0.8">APARTMENTS</text>
   </g>
   <g transform="translate(${WIDTH - 72} ${HEIGHT - 86})" fill="#f7f2e9" opacity="0.85" text-anchor="end" font-family="Georgia, 'Times New Roman', serif">
     <text x="0" y="0" font-size="20" letter-spacing="6">PLATYS GIALOS · SIFNOS</text>

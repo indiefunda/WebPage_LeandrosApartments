@@ -54,13 +54,29 @@ const settle = async () => {
         if (y < document.documentElement.scrollHeight) {
           setTimeout(step, 45);
         } else {
-          window.scrollTo(0, 0);
-          setTimeout(resolve, 350);
+          // Dwell at the bottom so the end-of-page reveal pass runs.
+          setTimeout(() => {
+            window.scrollTo(0, 0);
+            setTimeout(resolve, 1200);
+          }, 900);
         }
       };
       step();
     });
   });
+  // Regression guard: after a real scroll, no reveal element may still be
+  // invisible. (Forcing opacity below made screenshots look fine while
+  // visitors saw blank sections.)
+  await page.waitForTimeout(1300);
+  const hiddenAfterScroll = await page.evaluate(
+    () =>
+      [...document.querySelectorAll('[data-reveal]')].filter(
+        (el) => Number.parseFloat(getComputedStyle(el).opacity) < 0.9,
+      ).length,
+  );
+  if (hiddenAfterScroll > 0) {
+    report.failures.push(`${page.url()} has ${hiddenAfterScroll} revealed element(s) still invisible`);
+  }
   await page.addStyleTag({
     content: '[data-reveal]{opacity:1!important;transform:none!important}',
   });

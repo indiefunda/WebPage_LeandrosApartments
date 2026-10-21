@@ -5,18 +5,17 @@ import type { Review, SiteContent } from '../content/types';
 export interface Props {
   reviews: Review[];
   content: SiteContent;
-  note: string;
   title: string;
 }
 
-const { reviews, content: t, note, title } = Astro.props;
+const { reviews, content: t, title } = Astro.props;
 ---
 
 <div class="reviews" data-reviews>
   <div class="reviews__rail no-scrollbar" data-reviews-rail aria-label={title} tabindex="0">
     {
       reviews.map((review, index) => (
-        <article class="review" data-reveal style={`--reveal-delay:${index % 3}`}>
+        <article class="review">
           <span class="review__mark" aria-hidden="true">
             “
           </span>
@@ -26,7 +25,6 @@ const { reviews, content: t, note, title } = Astro.props;
               {review.author}
               <span class="review__origin">{review.origin}</span>
             </p>
-            <p class="review__note">{note}</p>
           </footer>
         </article>
       ))
@@ -102,12 +100,6 @@ const { reviews, content: t, note, title } = Astro.props;
 
   .review__origin {
     font-weight: 400;
-    color: var(--color-ink-muted);
-  }
-
-  .review__note {
-    font-size: 0.66rem;
-    letter-spacing: 0.05em;
     color: var(--color-ink-muted);
   }
 

@@ -310,12 +310,8 @@ const ratesHref = localizePath(locale, 'rates/');
   <section class="section reviews-section">
     <div class="shell">
       <SectionHead eyebrow={t.home.reviews.eyebrow} title={t.home.reviews.title} />
-      <ReviewCarousel
-        reviews={t.reviews}
-        content={t}
-        note={t.home.reviews.note}
-        title={t.home.reviews.title}
-      />
+      <p class="reviews__note">{t.home.reviews.note}</p>
+      <ReviewCarousel reviews={t.reviews} content={t} title={t.home.reviews.title} />
     </div>
   </section>
 
@@ -466,6 +462,16 @@ const ratesHref = localizePath(locale, 'rates/');
     animation: fade 1.4s 0.8s ease both;
   }
 
+  @media (max-width: 560px) {
+    .hero__meta {
+      gap: 0.35rem 0.9rem;
+    }
+
+    .hero__meta span[aria-hidden='true'] {
+      display: none;
+    }
+  }
+
   .hero__media {
     position: relative;
     padding-bottom: 2.5rem;
@@ -583,9 +589,10 @@ const ratesHref = localizePath(locale, 'rates/');
   }
 
   .manifesto__head {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 1.2rem;
-    align-content: start;
+    align-self: stretch;
   }
 
   .manifesto__title {
@@ -593,6 +600,7 @@ const ratesHref = localizePath(locale, 'rates/');
   }
 
   .manifesto__signoff {
+    margin-top: auto;
     font-family: var(--font-display);
     font-style: italic;
     font-size: 1.1rem;
@@ -825,7 +833,14 @@ const ratesHref = localizePath(locale, 'rates/');
   }
 
   .reviews-section :global(.section-head) {
+    margin-bottom: 0.75rem;
+  }
+
+  .reviews__note {
     margin-bottom: clamp(1.75rem, 3vw, 2.75rem);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-muted);
   }
 
   /* Offers ---------------------------------------------------------------- */
@@ -968,11 +983,6 @@ const ratesHref = localizePath(locale, 'rates/');
 
     .manifesto__grid {
       grid-template-columns: 0.8fr 1.2fr;
-    }
-
-    .manifesto__head {
-      position: sticky;
-      top: calc(var(--header-h) + 2rem);
     }
 
     .courtyard__grid {

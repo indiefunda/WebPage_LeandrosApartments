@@ -1,8 +1,11 @@
 ---
 /**
- * The wordmark is set in the site's display serif — no raster logo, so it stays
- * crisp on every screen. The Λ monogram is drawn geometrically and doubles as
- * the favicon.
+ * Brand lockup.
+ *
+ * A modernisation of the property's original logo: the old blue swoosh becomes
+ * a fine wave line under the wordmark, the wordmark moves to the editorial
+ * serif, and the monogram is the Greek lambda of Λέανδρος — no crossbar, so it
+ * never reads as a Latin "A".
  */
 export interface Props {
   href: string;
@@ -17,15 +20,24 @@ const { href, tone = 'ink', compact = false } = Astro.props;
   <svg class="logo__mark" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
     <circle cx="22" cy="22" r="21" fill="none" stroke="currentColor" stroke-width="1"></circle>
     <path
-      d="M14.5 30.5 22 13.5l7.5 17"
+      d="M13.8 31.2 22 12.4l8.2 18.8"
       fill="none"
       stroke="currentColor"
-      stroke-width="1.4"
+      stroke-width="1.5"
+      stroke-linecap="round"
       stroke-linejoin="round"></path>
-    <path d="M18.1 26h7.8" fill="none" stroke="currentColor" stroke-width="1.1"></path>
   </svg>
+
   <span class="logo__text">
     <span class="logo__name">Leandros</span>
+    <svg class="logo__wave" viewBox="0 0 120 7" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path
+        d="M1.5 4.2C15 0.9 28.5 0.9 42 4.2s27 3.3 40.5 0 22.5-2.4 36 0"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1"
+        stroke-linecap="round"></path>
+    </svg>
     <span class="logo__suffix">Apartments</span>
   </span>
 </a>
@@ -36,7 +48,7 @@ const { href, tone = 'ink', compact = false } = Astro.props;
     align-items: center;
     gap: 0.72rem;
     text-decoration: none;
-    color: var(--color-ink);
+    color: var(--color-sea);
   }
 
   .logo--light {
@@ -44,59 +56,90 @@ const { href, tone = 'ink', compact = false } = Astro.props;
   }
 
   .logo__mark {
-    width: 2.55rem;
-    height: 2.55rem;
+    width: 2.6rem;
+    height: 2.6rem;
     flex: none;
     transition: transform 0.7s var(--ease-out-expo);
   }
 
   .logo:hover .logo__mark {
-    transform: rotate(-4deg);
+    transform: rotate(-3deg);
   }
 
   .logo__text {
     display: grid;
-    gap: 0.12rem;
+    gap: 0.16rem;
     line-height: 1;
+    min-width: 5.6rem;
   }
 
   .logo__name {
     font-family: var(--font-display);
     font-size: 1.55rem;
-    letter-spacing: 0.01em;
-    line-height: 0.95;
+    letter-spacing: 0.005em;
+    line-height: 0.92;
+    color: var(--color-ink);
+  }
+
+  .logo--light .logo__name {
+    color: var(--color-paper);
+  }
+
+  .logo__wave {
+    display: block;
+    width: 100%;
+    height: 0.32rem;
+    color: var(--color-sea);
+    opacity: 0.55;
+  }
+
+  .logo--light .logo__wave {
+    color: var(--color-paper);
+    opacity: 0.5;
   }
 
   .logo__suffix {
+    justify-self: end;
     font-family: var(--font-sans);
-    font-size: 0.5rem;
+    font-size: 0.47rem;
     font-weight: 500;
-    letter-spacing: 0.34em;
+    letter-spacing: 0.32em;
     text-transform: uppercase;
-    opacity: 0.7;
-    padding-left: 0.1em;
+    color: var(--color-ink-muted);
+    padding-top: 0.05rem;
+  }
+
+  .logo--light .logo__suffix {
+    color: rgb(247 242 233 / 0.72);
   }
 
   .logo--compact .logo__mark {
-    width: 2.1rem;
-    height: 2.1rem;
+    width: 2.2rem;
+    height: 2.2rem;
   }
 
   .logo--compact .logo__name {
-    font-size: 1.3rem;
+    font-size: 1.38rem;
+  }
+
+  .logo--compact .logo__text {
+    min-width: 5rem;
   }
 
   @media (max-width: 420px) {
+    .logo {
+      gap: 0.55rem;
+    }
     .logo__mark {
-      width: 2.15rem;
-      height: 2.15rem;
+      width: 2.2rem;
+      height: 2.2rem;
     }
     .logo__name {
       font-size: 1.3rem;
     }
     .logo__suffix {
-      font-size: 0.44rem;
-      letter-spacing: 0.28em;
+      font-size: 0.42rem;
+      letter-spacing: 0.26em;
     }
   }
 </style>

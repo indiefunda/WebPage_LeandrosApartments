@@ -17,7 +17,7 @@ export interface Props {
 const { locale } = Astro.props;
 const t = getContent(locale);
 
-const sectionImages: PhotoKey[] = ['umbrellas', 'bay-vouno', 'alley', 'terrace-wide'];
+const sectionImages: PhotoKey[] = ['bay-vouno', 'alley', 'pottery', 'umbrellas'];
 const ratesHref = localizePath(locale, 'rates/');
 
 const crumbs = breadcrumbs(

@@ -107,24 +107,56 @@ const jsonLdItems = (Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : []).fi
     <LangNotice locale={locale} path={path} />
 
     <script>
-      // Scroll reveals — one observer, unobserved after first reveal.
+      // Scroll reveals.
+      //
+      // Deliberately not an IntersectionObserver: a fast flick can carry an
+      // element through the viewport between observation frames, leaving a
+      // section permanently invisible. This checks positions on scroll instead,
+      // which always converges, and stops listening once everything is shown.
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      const items = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
 
-      if (reduced || !('IntersectionObserver' in window)) {
+      if (reduced) {
         items.forEach((item) => item.setAttribute('data-reveal', 'in'));
       } else {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (!entry.isIntersecting) continue;
-              entry.target.setAttribute('data-reveal', 'in');
-              observer.unobserve(entry.target);
-            }
-          },
-          { rootMargin: '280px 0px 280px 0px', threshold: 0.01 },
-        );
-        items.forEach((item) => observer.observe(item));
+        const pending = new Set(items);
+        let ticking = false;
+
+        const check = () => {
+          const viewport = window.innerHeight;
+          const atBottom = window.scrollY + viewport >= document.documentElement.scrollHeight - 8;
+
+          if (atBottom) {
+            pending.forEach((item) => item.setAttribute('data-reveal', 'in'));
+            pending.clear();
+          } else {
+            pending.forEach((item) => {
+              const rect = item.getBoundingClientRect();
+              if (rect.top < viewport * 0.92) {
+                item.setAttribute('data-reveal', 'in');
+                pending.delete(item);
+              }
+            });
+          }
+
+          if (pending.size === 0) {
+            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', check);
+          }
+        };
+
+        const onScroll = () => {
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(() => {
+            ticking = false;
+            check();
+          });
+        };
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', check);
+        check();
       }
     </script>
 
