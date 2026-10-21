@@ -343,3 +343,19 @@ Measured on the production deployment, October 2026:
 
 These are samples from this machine and Cloud CDN edge, not a lab benchmark;
 re-run `npm run a11y -- --perf` and `scripts/qa.mjs` after any change.
+---
+
+## Security
+
+The Firebase browser key in `src/data/firebase.ts` is a **public client
+identifier, not a credential**. It ships to every browser by design, cannot
+access Gmail or any Google account, and is scoped to this Firebase project.
+
+It is now hardened: restricted to the `firestore.googleapis.com` API only, with
+HTTP referrer restrictions for the production domains and local development.
+Firestore rules allow anonymous **create only** for enquiries — no reads,
+updates or deletes — so submitted data cannot be read with the key.
+
+GitHub secret scanning flags any committed Firebase config; see
+[SECURITY.md](SECURITY.md) for the verified controls, the residual spam risk and
+rotation steps.
