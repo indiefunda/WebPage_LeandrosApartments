@@ -9,6 +9,7 @@ import type { Locale } from '../../content/types';
 import { localizePath } from '../../i18n/routing';
 import type { PhotoKey } from '../../data/photos';
 import { breadcrumbs } from '../../data/schema';
+import { property } from '../../data/property';
 
 export interface Props {
   locale: Locale;
@@ -40,7 +41,7 @@ const crumbs = breadcrumbs(
     eyebrow={t.locationPage.eyebrow}
     title={t.locationPage.title}
     intro={t.locationPage.intro}
-    meta="36.9367° N · 24.7069° E"
+    meta={`${property.geo.lat.toFixed(4)}° N · ${property.geo.lng.toFixed(4)}° E`}
   />
 
   <section class="location-hero">
