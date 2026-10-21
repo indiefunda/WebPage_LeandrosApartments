@@ -26,7 +26,7 @@ if (!unit) {
 const index = t.units.findIndex((item) => item.slug === slug);
 const covers: PhotoKey[] = ['m1-balcony', 'f2-veranda', 'b3-balcony'];
 const cover = photos[covers[index] ?? 'house-front'];
-const galleryKeys = (unitGalleries[slug] ?? []).slice(1);
+const galleryKeys = unitGalleries[slug] ?? [];
 const others = t.units.filter((item) => item.slug !== slug);
 const contactHref = localizePath(locale, 'contact/');
 const path = `apartments/${slug}/`;
