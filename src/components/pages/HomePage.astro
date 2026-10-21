@@ -3,7 +3,7 @@ import { getImage, Picture } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AvailabilityBar from '../AvailabilityBar.astro';
 import ApartmentCard from '../ApartmentCard.astro';
-import ReviewCarousel from '../ReviewCarousel.astro';
+import Reviews from '../Reviews.astro';
 import SectionHead from '../SectionHead.astro';
 import Icon from '../Icon.astro';
 import MediaFrame from '../MediaFrame.astro';
@@ -311,7 +311,7 @@ const ratesHref = localizePath(locale, 'rates/');
     <div class="shell">
       <SectionHead eyebrow={t.home.reviews.eyebrow} title={t.home.reviews.title} />
       <p class="reviews__note">{t.home.reviews.note}</p>
-      <ReviewCarousel reviews={t.reviews} content={t} title={t.home.reviews.title} />
+      <Reviews reviews={t.reviews} content={t} />
     </div>
   </section>
 
