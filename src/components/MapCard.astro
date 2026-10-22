@@ -41,7 +41,12 @@ const coords = `${property.geo.lat.toFixed(6)}° N · ${property.geo.lng.toFixed
 
     <span class="map__pin" aria-hidden="true">
       <span class="map__pin-label">{property.name}</span>
-      <span class="map__pin-dot"></span>
+      <svg class="map__pin-mark" viewBox="0 0 28 36" aria-hidden="true">
+        <path
+          d="M14 0C6.3 0 0 6.3 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.3 21.7 0 14 0Z"
+          fill="currentColor"></path>
+        <circle cx="14" cy="14" r="5" fill="var(--color-paper)"></circle>
+      </svg>
     </span>
 
     <a class="map__credit" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">
@@ -144,15 +149,11 @@ const coords = `${property.geo.lat.toFixed(6)}° N · ${property.geo.lng.toFixed
     box-shadow: 0 12px 30px -18px rgb(10 42 47 / 0.55);
   }
 
-  .map__pin-dot {
-    width: 0.95rem;
-    height: 0.95rem;
-    border-radius: 999px;
-    background: var(--color-clay);
-    border: 2px solid var(--color-paper);
-    box-shadow:
-      0 0 0 5px rgb(157 75 50 / 0.25),
-      0 8px 18px -6px rgb(10 42 47 / 0.55);
+  .map__pin-mark {
+    width: 1.55rem;
+    height: auto;
+    color: var(--color-clay);
+    filter: drop-shadow(0 10px 16px rgb(10 42 47 / 0.4));
   }
 
   /* Credit & controls ---------------------------------------------------- */
