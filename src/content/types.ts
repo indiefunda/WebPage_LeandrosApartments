@@ -201,6 +201,7 @@ export interface SiteContent {
     eyebrow: string;
     title: string;
     intro: string;
+    meta: string;
     outro: string;
     specsTitle: string;
     bedsTitle: string;

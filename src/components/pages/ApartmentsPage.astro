@@ -40,7 +40,7 @@ const crumbs = breadcrumbs(
     eyebrow={t.apartmentsPage.eyebrow}
     title={t.apartmentsPage.title}
     intro={t.apartmentsPage.intro}
-    meta="3 · Platys Gialos"
+    meta={t.apartmentsPage.meta}
   />
 
   <section class="section-tight units">
@@ -128,10 +128,13 @@ const crumbs = breadcrumbs(
 </BaseLayout>
 
 <style>
+  .units {
+    padding-top: clamp(1.5rem, 2.5vw, 2.5rem);
+  }
+
   .units__list {
     display: grid;
     gap: clamp(3.5rem, 8vw, 7rem);
-    padding-top: clamp(1rem, 2.5vw, 2rem);
   }
 
   .unit-row {

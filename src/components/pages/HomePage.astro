@@ -22,7 +22,6 @@ const { locale } = Astro.props;
 const t = getContent(locale);
 
 const heroMain = photos['house-front'];
-const heroInset = photos['courtyard'];
 const unitCovers: PhotoKey[] = ['m1-balcony', 'f2-veranda', 'b3-balcony'];
 
 // The band is a full-bleed backdrop. A plain, pre-sized WebP keeps the markup
@@ -101,25 +100,6 @@ const ratesHref = localizePath(locale, 'rates/');
           />
         </div>
 
-        <div class="hero__inset">
-          <Picture
-            src={heroInset.src}
-            formats={['avif', 'webp']}
-            fallbackFormat="jpeg"
-            widths={[220, 320, 420]}
-            sizes="(min-width: 900px) 190px, 34vw"
-            alt={heroInset.alt[locale]}
-            loading="lazy"
-            decoding="async"
-            quality={70}
-          />
-          <span class="hero__inset-caption">{t.home.hero.insetCaption}</span>
-        </div>
-
-        <div class="hero__badge badge-round" aria-hidden="true">
-          <span>{t.home.hero.badge}</span>
-        </div>
-
         <p class="hero__caption">{t.home.hero.imageCaption}</p>
       </div>
     </div>
@@ -154,21 +134,23 @@ const ratesHref = localizePath(locale, 'rates/');
       <div class="manifesto__head" data-reveal>
         <p class="eyebrow">{t.home.intro.eyebrow}</p>
         <h2 class="display-lg manifesto__title">{t.home.intro.title}</h2>
-        <p class="manifesto__signoff">{t.home.intro.signoff}</p>
       </div>
 
       <div class="manifesto__body">
         <div class="manifesto__text" data-reveal>
           {t.home.intro.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
         </div>
+        <p class="manifesto__signoff">{t.home.intro.signoff}</p>
+      </div>
 
+      <div class="manifesto__media">
         <MediaFrame
           photo="veranda"
           locale={locale}
-          ratio="16 / 9"
+          ratio="4 / 3"
           class="manifesto__image"
           caption={t.home.intro.imageCaption}
-          sizes="(min-width: 1024px) 58vw, 100vw"
+          sizes="(min-width: 1024px) 52vw, 100vw"
         />
       </div>
     </div>
@@ -293,13 +275,7 @@ const ratesHref = localizePath(locale, 'rates/');
           locale={locale}
           ratio="4 / 5"
           sizes="(min-width: 1024px) 40vw, 100vw"
-        />
-        <MediaFrame
-          photo="pottery"
-          locale={locale}
-          ratio="1 / 1"
-          class="location__small"
-          sizes="(min-width: 1024px) 15vw, 40vw"
+          caption={t.home.hero.badge}
         />
         <p class="location__coord">{property.geo.lat.toFixed(4)}° N · {property.geo.lng.toFixed(4)}° E</p>
       </div>
@@ -484,7 +460,6 @@ const ratesHref = localizePath(locale, 'rates/');
   .hero__media {
     position: relative;
     padding-bottom: 2.5rem;
-    padding-left: 1.25rem;
     animation: fade 1.6s 0.2s ease both;
   }
 
@@ -500,42 +475,6 @@ const ratesHref = localizePath(locale, 'rates/');
     aspect-ratio: 4 / 5;
     object-fit: cover;
     object-position: 68% 46%;
-  }
-
-  .hero__inset {
-    position: absolute;
-    left: -0.25rem;
-    bottom: 0;
-    width: clamp(7rem, 34%, 11.5rem);
-    padding: 0.35rem;
-    background: var(--color-paper);
-    border: 1px solid var(--color-line);
-    box-shadow: 0 22px 48px -34px rgb(10 42 47 / 0.5);
-  }
-
-  .hero__inset img {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-  }
-
-  .hero__inset-caption {
-    display: block;
-    padding-top: 0.4rem;
-    font-size: 0.55rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--color-ink-muted);
-  }
-
-  .hero__badge {
-    position: absolute;
-    top: -1.6rem;
-    right: -0.5rem;
-    z-index: 3;
-    color: var(--color-sea);
-    border-color: color-mix(in oklab, var(--color-sea) 25%, transparent);
-    font-weight: 500;
   }
 
   .hero__caption {
@@ -598,10 +537,9 @@ const ratesHref = localizePath(locale, 'rates/');
   }
 
   .manifesto__head {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: 1.2rem;
-    align-self: stretch;
+    align-content: start;
   }
 
   .manifesto__title {
@@ -609,7 +547,7 @@ const ratesHref = localizePath(locale, 'rates/');
   }
 
   .manifesto__signoff {
-    margin-top: auto;
+    margin: 0.25rem 0 0;
     font-family: var(--font-display);
     font-style: italic;
     font-size: 1.1rem;
@@ -618,7 +556,12 @@ const ratesHref = localizePath(locale, 'rates/');
 
   .manifesto__body {
     display: grid;
-    gap: 2rem;
+    gap: 1.75rem;
+    align-content: start;
+  }
+
+  .manifesto__media {
+    align-self: start;
   }
 
   .manifesto__text {
@@ -675,9 +618,8 @@ const ratesHref = localizePath(locale, 'rates/');
   }
 
   .courtyard__list {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.55rem 1.5rem;
+    columns: 1;
+    column-gap: 2rem;
     list-style: none;
     margin: 0;
     padding: 1.25rem 0 0;
@@ -688,6 +630,8 @@ const ratesHref = localizePath(locale, 'rates/');
     display: flex;
     align-items: baseline;
     gap: 0.6rem;
+    margin-bottom: 0.65rem;
+    break-inside: avoid;
     font-size: 0.88rem;
     color: var(--color-ink-soft);
   }
@@ -810,25 +754,13 @@ const ratesHref = localizePath(locale, 'rates/');
   }
 
   .location__media {
-    position: relative;
-    padding-bottom: 3rem;
-    padding-right: 1.5rem;
-  }
-
-  :global(.location__small) {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: clamp(6rem, 32%, 10rem);
-    border: 1px solid var(--color-line);
-    background: var(--color-paper);
-    padding: 0.3rem;
+    display: grid;
+    gap: 0.85rem;
+    align-content: start;
   }
 
   .location__coord {
-    position: absolute;
-    left: 0;
-    bottom: 0.3rem;
+    margin: 0;
     font-size: 0.6rem;
     letter-spacing: 0.16em;
     color: var(--color-ink-muted);
@@ -988,7 +920,7 @@ const ratesHref = localizePath(locale, 'rates/');
     }
 
     .courtyard__list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      columns: 2;
     }
   }
 
@@ -1005,16 +937,30 @@ const ratesHref = localizePath(locale, 'rates/');
     }
 
     .hero__media {
-      padding-left: 2.5rem;
       padding-bottom: 3rem;
     }
 
-    .hero__badge {
-      right: -1.6rem;
+    .manifesto__grid {
+      grid-template-columns: 0.9fr 1.1fr;
+      column-gap: clamp(2.5rem, 5vw, 5rem);
+      row-gap: clamp(1.5rem, 2.5vw, 2.25rem);
+      align-items: start;
     }
 
-    .manifesto__grid {
-      grid-template-columns: 0.8fr 1.2fr;
+    .manifesto__head {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .manifesto__body {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .manifesto__media {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      align-self: start;
     }
 
     .courtyard__grid {

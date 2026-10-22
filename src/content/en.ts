@@ -286,6 +286,7 @@ export const en: SiteContent = {
     title: 'Choose your corner of the house.',
     intro:
       'Three apartments share the courtyard and the beach. Each has its own entrance, a fully equipped kitchen, air conditioning and Wi-Fi; linen and towels are changed every three days.',
+    meta: '3 apartments · Platys Gialos',
     outro: 'Not sure which one suits you? Tell us who is travelling and we will suggest the right apartment.',
     specsTitle: 'The layout',
     bedsTitle: 'Where you sleep',

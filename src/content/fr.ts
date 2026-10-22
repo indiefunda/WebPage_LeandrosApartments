@@ -291,6 +291,7 @@ export const fr: SiteContent = {
     title: 'Choisissez votre coin de la maison.',
     intro:
       'Trois appartements se partagent la cour et la plage. Chacun a son entrée, une cuisine entièrement équipée, la climatisation et le Wi-Fi ; le linge de lit et les serviettes sont changés tous les trois jours.',
+    meta: '3 appartements · Platys Gialos',
     outro:
       'Vous hésitez encore ? Dites-nous qui voyage et nous vous indiquerons l’appartement qui vous convient.',
     specsTitle: 'L’agencement',
