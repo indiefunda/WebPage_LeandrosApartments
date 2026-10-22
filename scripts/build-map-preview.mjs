@@ -17,8 +17,8 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const outDir = join(root, 'public', 'map');
 const outFile = join(outDir, 'platys-gialos.jpg');
 
-const LAT = 36.93063;
-const LON = 24.72456;
+const LAT = 36.93061;
+const LON = 24.727143;
 const ZOOM = 15;
 const TILE = 256;
 const COLS = 6;

@@ -361,7 +361,7 @@ the map”, so no third-party request happens on page load.
 - The preview is a static image generated from OpenStreetMap tiles and committed
   to `public/map/platys-gialos.jpg`, with the required attribution shown on the
   card.
-- Coordinates (`36.93063, 24.72456`) live in `src/data/property.ts` together
+- Coordinates (`36.93061, 24.727143`) live in `src/data/property.ts` together
   with the Google embed parameter, the listing URL (`cid=…`) and the directions
   URL.
 - If the listing moves or the preview needs refreshing, update `property.ts`,
